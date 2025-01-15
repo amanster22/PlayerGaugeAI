@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Salary Prediction</title>
+</head>
+<body>
+    <h1>NBA Player Salary Prediction</h1>
+    
+    <p>Random Forest R-squared: {{ r2_score }}</p>
+    <p>Random Forest Mean Squared Error: {{ mse }}</p>
+    <p>Cross-validated R-squared: {{ cross_val_r2 }}</p>
+    
+    <h2>Enter Player's Name</h2>
+    <form action="/predict" method="post">
+        <input type="text" name="player_name" placeholder="Player's Name" required>
+        <button type="submit">Predict Salary</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        const form = document.querySelector('form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (data.error) {
+                document.getElementById('result').innerText = data.error;
+            } else {
+                document.getElementById('result').innerHTML = `
+                    Predicted Salary: ${data.predicted_salary}<br>
+                    Current Salary: ${data.current_salary}<br>
+                    Performance: ${data.performance}
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
