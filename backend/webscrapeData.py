@@ -40,7 +40,8 @@ def updateData():
     nba_df_p = pd.DataFrame(player_info,columns=headers)
     nba_df_p.to_excel('UPDATED.xlsx')
 
-    salaryData = pd.read_excel('../database/salaryData.xlsx')
+    # salaryData = pd.read_excel('../database/salaryData.xlsx')
+    salaryData = pd.read_csv('../database/salaryData.csv')
     salaryData = salaryData.rename(columns={'player_id': 'PLAYER_NAME'})
 
     merged_df = nba_df_p.merge(salaryData[['PLAYER_NAME', '2024-25']], on="PLAYER_NAME", how="left")

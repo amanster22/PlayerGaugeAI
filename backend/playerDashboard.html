@@ -1,14 +1,14 @@
 
     <html>
     <head>
-        <title>Shai Gilgeous-Alexander Stats</title>
+        <title>James Harden Stats</title>
         <style>
             body {
                 font-family: 'Arial', sans-serif;
                 line-height: 1.6;
                 margin: 20px;
                 color: #333;
-                background-color: #f9f9f9;
+                background-color: GhostWhite;
             }
             h1 {
                 text-align: center;
@@ -110,35 +110,39 @@
                 text-align: center; /* Centers text */
             }
             iframe {
-                width: 80%;
-                height: 600px;
+                width: 60%;
+                height: 60%;
                 border: none;
             }
         </style>
         <script>
+
+        
             function toggleGraph() {
                 var graphContainer = document.getElementById("graph-container");
                 if (graphContainer.style.display === "none") {
                     graphContainer.style.display = "block";
+                    graphContainer.scrollIntoView && graphContainer.scrollIntoView({ behavior: "smooth" });
                 } else {
                     graphContainer.style.display = "none";
                 }
             }
         </script>
+
     </head>
     <body>
-        <h1>Shai Gilgeous-Alexander Stats</h1>
-        <img src="https://www.basketball-reference.com/req/202012291/images/headshots/gilgesh01.jpg" alt="Shai Gilgeous-Alexander's Picture" width="200">
+        <h1>James Harden Stats</h1>
+        <img src="https://www.basketball-reference.com/req/202012291/images/headshots/hardeja01.jpg" alt="James Harden's Picture" width="200">
 
         <table>
             <tr>
-                <th>Team</th><td>OKC</td>
+                <th>Team</th><td>LAC</td>
                 <th>Height</th><td>UNK</td>
                 <th>Weight</th><td>UNK</td>
                 <th>Country</th><td>UNK</td>
             </tr>
             <tr>
-                <th>Age</th><td>26.0</td>
+                <th>Age</th><td>35.0</td>
                 <th>Birthday</th><td>UNK</td>
                 <th>Draft</th><td>UNK</td>
                 <th>Experience</th><td>UNK</td>
@@ -147,10 +151,10 @@
 
         <table>
             <tr>
-                <th>PPG</th><td class="stat-box" style="background-color: 00b0f0;">31.4</td>
-                <th>APG</th><td class="stat-box" style="background-color: 00b0f0;">6.0</td>
-                <th>RPG</th><td class="stat-box" style="background-color: purple;">5.5</td>
-                <th>+/-</th><td class="stat-box" style="background-color: 00b0f0;">0.3</td>
+                <th>PPG</th><td class="stat-box" style="background-color: purple;">21.5</td>
+                <th>APG</th><td class="stat-box" style="background-color: 00b0f0;">7.9</td>
+                <th>RPG</th><td class="stat-box" style="background-color: purple;">5.9</td>
+                <th>+/-</th><td class="stat-box" style="background-color: #f39c12;">0.0</td>
             </tr>
         </table>
         <!-- Legend Section -->
@@ -168,7 +172,7 @@
 
         <!-- Graph Container (Initially Hidden) -->
         <div id="graph-container">
-            <h2>Anticipated Player Rank: 2</h2>
+            <h2>Anticipated Player Rank: 20</h2>
             <iframe src="interactive_bubble_plot.html"></iframe>
             
         </div>

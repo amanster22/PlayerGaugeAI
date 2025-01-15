@@ -9,7 +9,7 @@ def updateDashboard(playerData):
                 line-height: 1.6;
                 margin: 20px;
                 color: #333;
-                background-color: #f9f9f9;
+                background-color: GhostWhite;
             }}
             h1 {{
                 text-align: center;
@@ -111,21 +111,25 @@ def updateDashboard(playerData):
                 text-align: center; /* Centers text */
             }}
             iframe {{
-                width: 80%;
-                height: 600px;
+                width: 60%;
+                height: 60%;
                 border: none;
             }}
         </style>
         <script>
+
+        
             function toggleGraph() {{
                 var graphContainer = document.getElementById("graph-container");
                 if (graphContainer.style.display === "none") {{
                     graphContainer.style.display = "block";
+                    graphContainer.scrollIntoView && graphContainer.scrollIntoView({{ behavior: "smooth" }});
                 }} else {{
                     graphContainer.style.display = "none";
                 }}
             }}
         </script>
+
     </head>
     <body>
         <h1>{player_name} Stats</h1>

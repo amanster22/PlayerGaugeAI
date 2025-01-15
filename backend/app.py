@@ -33,7 +33,9 @@ data['PLUS_MINUS'] = data['PLUS_MINUS'] / data['GP']
 data['NORMALIZED_NAME'] = data['PLAYER_NAME'].apply(normalize_text)
 data['NBA_FANTASY_PTS'] = data['NBA_FANTASY_PTS'] / data['GP']
 data = data.dropna(subset=['SALARY'])
-data['SALARY'] = pd.to_numeric(data['SALARY'])
+data['SALARY'] = data['SALARY'].replace('[\$,]', '', regex=True).str.strip()
+# data['SALARY'] = pd.to_numeric(data['SALARY'])
+data['SALARY'] = pd.to_numeric(data['SALARY'], errors='coerce')
 
 selected_features = ['GP', 'AGE', 'PTS', 'AST', 'REB', 'NBA_FANTASY_PTS', 'MIN', 'PLUS_MINUS', 'FGM','FGA','W_PCT']
 X = data[selected_features]
@@ -147,6 +149,3 @@ interactiveBubblePlot(data, playerName)
 updateDashboard(playerData)
 
 
-
-
-webbrowser.open('file:///Users/amanshaik/Documents/GitHub/PlayerGaugeAI/backend/playerDashboard.html')

@@ -50,7 +50,22 @@ def interactiveBubblePlot(data, player_name=None):
         yaxis_title="Salary (in $ millions)",
         legend_title="Player Status",
         template="plotly_dark",
+        legend=dict(
+        x=1,  # x position (1 is fully to the right side of the plot)
+        y=1,  # y position (1 is the top of the plot)
+        xanchor='left',  # Anchor the legend's left side to the x position
+        yanchor='top',  # Anchor the legend's top side to the y position
+        orientation='v',  # Set legend orientation to vertical ('h' for horizontal)
+        font=dict(size=12),  # Font size of the legend labels
+        bgcolor='rgba(0,0,0,0.1)',  # Semi-transparent background for readability
+        bordercolor='black',  # Border color for the legend box
+        borderwidth=2,  # Border width for the legend box
+    ),
+        margin=dict(l=40, r=30, t=40, b=40),  # Add extra margin on the right for the legend
+        autosize=True,
+
     )
+
 
     # Save the interactive plot as an HTML file
     fig.write_html("interactive_bubble_plot.html")
