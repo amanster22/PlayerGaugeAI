@@ -3,20 +3,21 @@ import seaborn as sns
 from webscrapeData import updateData
 import pandas as pd
 import plotly.express as px
-
+from scipy.stats import linregress
 
 updateData()
 
 def interactiveBubblePlot(data, player_name=None):
     # Prepare the data
-    data['SCALED_PTS'] = data['NBA_FANTASY_PTS'] / data['NBA_FANTASY_PTS'].max() * 350
+    
     data['SALARY_MILLIONS'] = data['SALARY'] / 1000000  # Salary in millions
-
+    data['SCALED_PTS'] = round(data['NBA_FANTASY_PTS'] / data['SALARY_MILLIONS'].max()*500)
+    print(type(data['NBA_FANTASY_PTS_RANK']))
+    # data['NBA_FANTASY_PTS_RANK'] = int(data['NBA_FANTASY_PTS_RANK'])
     # Highlight a player if provided
     if player_name:
         name = player_name
         player_name = player_name.lower()
-        print(player_name)
         data['HIGHLIGHT'] = data['PLAYER_NAME'].str.lower() == player_name
 
         # Create a new column to store the color for each player
@@ -33,10 +34,12 @@ def interactiveBubblePlot(data, player_name=None):
         color='PLAYER', 
         hover_name='PLAYER_NAME',
         hover_data={
+            'NBA_FANTASY_PTS_RANK': ':.2f',
             'NBA_FANTASY_PTS': ':.2f',
             'SALARY_MILLIONS': ':.2f',
             'AGE': True,
             'PTS': ':.2f',
+            
         },
         title="NBA Salary vs Fantasy Points with Age and Points",
     )

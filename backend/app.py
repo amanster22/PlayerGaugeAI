@@ -65,12 +65,11 @@ rf_model = RandomForestRegressor(max_depth=None, min_samples_split=10, n_estimat
 rf_model.fit(X_train_scaled, y_train)
 
 # Evaluating Model
-y_rf_pred = rf_model.predict(X_test_scaled)
-
-rf_r2 = r2_score(y_test, y_rf_pred)
+# y_rf_pred = rf_model.predict(X_test_scaled)
+# rf_r2 = r2_score(y_test, y_rf_pred)
 # rf_mse = mean_squared_error(y_test, y_rf_pred)
 
-print(f"Random Forest R-squared: {rf_r2:.4f}")
+# print(f"Random Forest R-squared: {rf_r2:.4f}")
 # print(f"Random Forest Mean Squared Error: {rf_mse:.2f}")
 
 # Cross-validation and GridSearchCV for hyperparameter tuning
