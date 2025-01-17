@@ -3,45 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBA Salary Prediction</title>
+    <title>Player Search Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .dashboard {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        .dashboard h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .dashboard input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .dashboard button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .dashboard button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-    <h1>NBA Player Salary Prediction</h1>
-    
-    <p>Random Forest R-squared: {{ r2_score }}</p>
-    <p>Random Forest Mean Squared Error: {{ mse }}</p>
-    <p>Cross-validated R-squared: {{ cross_val_r2 }}</p>
-    
-    <h2>Enter Player's Name</h2>
-    <form action="/predict" method="post">
-        <input type="text" name="player_name" placeholder="Player's Name" required>
-        <button type="submit">Predict Salary</button>
-    </form>
+    <div class="dashboard">
+        <h1>Search Player</h1>
+        <input type="text" id="player-name" name="playerName" placeholder="Enter player's name" required>
+        <button onclick="searchPlayer()">Search</button>
 
-    <div id="result"></div>
+        <div id="result"></div>
+    </div>
 
     <script>
-        const form = document.querySelector('form');
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(form);
-            const response = await fetch(form.action, {
-                method: form.method,
-                body: formData,
-            });
-
-            const data = await response.json();
-            if (data.error) {
-                document.getElementById('result').innerText = data.error;
-            } else {
-                document.getElementById('result').innerHTML = `
-                    Predicted Salary: ${data.predicted_salary}<br>
-                    Current Salary: ${data.current_salary}<br>
-                    Performance: ${data.performance}
-                `;
+        // Function to handle the search button click
+        function searchPlayer() {
+            const playerName = document.getElementById('player-name').value;
+            if (!playerName) {
+                alert('Please enter a player name');
+                return;
             }
-        });
+
+            // Make a POST request to the Flask backend
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `playerName=${encodeURIComponent(playerName)}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('result').innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = 'An error occurred. Please try again later.';
+            });
+        }
     </script>
 </body>
 </html>
