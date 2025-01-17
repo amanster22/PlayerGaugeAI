@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-from webscrapeData import updateData
+# from webscrapeData import updateData
 import pandas as pd
 import plotly.express as px
 from scipy.stats import linregress
 
-updateData()
+# updateData()
 
 def interactiveBubblePlot(data, player_name=None):
     # Prepare the data
