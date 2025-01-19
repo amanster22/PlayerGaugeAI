@@ -15,6 +15,10 @@ def updateDashboard(playerData):
                 text-align: center;
                 color: #555;
             }}
+            h3 {{
+                text-align: center;
+                color: #347deb;
+            }}
             img {{
                 display: block;
                 margin: 0 auto;
@@ -134,7 +138,9 @@ def updateDashboard(playerData):
     <body>
         <h1>{player_name} Stats</h1>
         <img src="{image_url}" alt="{player_name}'s Picture" width="200">
-
+        <h3>Anticipated Player Rank: {pRank}</h3>
+        <h3>24-25 Season Salary: {salary}</h3>
+        <h3>Predicted Salary: {predSalary}</h3>
         <table>
             <tr>
                 <th>Team</th><td>{team}</td>
@@ -166,6 +172,7 @@ def updateDashboard(playerData):
             <div class="gold">Solid Starter Tier (Next 25-30%)</div>
             <div class="silver">Rotation/Bench Tier (Next 25-30%)</div>
             <div class="bronze">Development Tier (Bottom 15-20%)</div>
+
         </div>
         
         <!-- Graph Button -->
@@ -173,7 +180,7 @@ def updateDashboard(playerData):
 
         <!-- Graph Container (Initially Hidden) -->
         <div id="graph-container">
-            <h2>Anticipated Player Rank: {pRank}</h2>
+            
             <iframe src="interactive_bubble_plot.html"></iframe>
             
         </div>
@@ -239,7 +246,9 @@ def updateDashboard(playerData):
         apg_color=colors[2],
         pm_color=colors[3],
         graph_url=graph_url,
-        pRank = round(placement)
+        pRank = round(placement),
+        salary = playerData['SALARY'].iloc[0],
+        predSalary = playerData['PREDICTED_SALARY'].iloc[0]
         
     )
     # Step 3: Write to an HTML file

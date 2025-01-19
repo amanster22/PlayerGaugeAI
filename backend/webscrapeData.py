@@ -1,18 +1,31 @@
 import requests
 import pandas as pd
-from datetime import datetime
-def updateData():
-    current_datetime = datetime.now()
-    month = current_datetime.month
+# from datetime import datetime
 
-    if month > 10:
-        currentSeason = current_datetime.year
-    else:
-        currentSeason = current_datetime.year - 1
+# current_datetime = datetime.now()
+# month = current_datetime.month
 
-    startYr = str(currentSeason)
-    endYr = str(currentSeason+1)[-2:]
-    season_id = startYr + '-' + endYr
+# if month > 10:
+#     currentSeason = current_datetime.year
+# else:
+#     currentSeason = current_datetime.year - 1
+
+# startYr = str(currentSeason)
+# endYr = str(currentSeason+1)[-2:]
+# season_id = startYr + '-' + endYr
+
+def updateData(season_id):
+    # current_datetime = datetime.now()
+    # month = current_datetime.month
+
+    # if month > 10:
+    #     currentSeason = current_datetime.year
+    # else:
+    #     currentSeason = current_datetime.year - 1
+
+    # startYr = str(currentSeason)
+    # endYr = str(currentSeason+1)[-2:]
+    # season_id = startYr + '-' + endYr
     per_mode = 'Totals'
 
     player_info_url='https://stats.nba.com/stats/leaguedashplayerstats?College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode='+per_mode+'&Period=0&PlayerExperience=&PlayerPosition=&PlusMinus=N&Rank=N&Season='+season_id+'&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&TwoWay=0&VsConference=&VsDivision=&Weight='
