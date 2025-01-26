@@ -15,6 +15,10 @@ def updateDashboard(playerData):
                 text-align: center;
                 color: #555;
             }}
+            h3 {{
+                text-align: center;
+                color: #347deb;
+            }}
             img {{
                 display: block;
                 margin: 0 auto;
@@ -134,7 +138,9 @@ def updateDashboard(playerData):
     <body>
         <h1>{player_name} Stats</h1>
         <img src="{image_url}" alt="{player_name}'s Picture" width="200">
-
+        <h3>Anticipated Player Rank: {pRank}</h3>
+        <h3>24-25 Season Salary: {salary}</h3>
+        <h3>Predicted Salary: {predSalary}</h3>
         <table>
             <tr>
                 <th>Team</th><td>{team}</td>
@@ -166,6 +172,7 @@ def updateDashboard(playerData):
             <div class="gold">Solid Starter Tier (Next 25-30%)</div>
             <div class="silver">Rotation/Bench Tier (Next 25-30%)</div>
             <div class="bronze">Development Tier (Bottom 15-20%)</div>
+
         </div>
         
         <!-- Graph Button -->
@@ -173,7 +180,7 @@ def updateDashboard(playerData):
 
         <!-- Graph Container (Initially Hidden) -->
         <div id="graph-container">
-            <h2>Anticipated Player Rank: {pRank}</h2>
+            
             <iframe src="interactive_bubble_plot.html"></iframe>
             
         </div>
@@ -183,6 +190,183 @@ def updateDashboard(playerData):
     </html>
 
     """
+
+
+    html_template = """
+<html>
+<head>
+    <title>{player_name} *Stats</title>
+    <style>
+        /* General Styles */
+        body {{
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+            background-color: GhostWhite;
+        }}
+        h1 {{
+            text-align: center;
+            color: #555;
+        }}
+        h3 {{
+            text-align: center;
+            color: #347deb;
+        }}
+        img {{
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+        }}
+
+        /* Table Styles */
+        table {{
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }}
+        th, td {{
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }}
+        th {{
+            background-color: #f4f4f4;
+            color: #333;
+            font-weight: bold;
+        }}
+        tr:nth-child(even) {{
+            background-color: #f9f9f9;
+        }}
+        tr:hover {{
+            background-color: #f1f1f1;
+        }}
+
+        /* Stat Box Styles */
+        .stat-box {{
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            color: #fff;
+        }}
+
+        /* Legend Section */
+        .legend {{
+            margin-top: 30px;
+            padding: 10px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }}
+        .legend h2 {{
+            margin-bottom: 20px;
+        }}
+        .legend div {{
+            margin-bottom: 10px;
+            font-weight: bold;
+        }}
+        .legend .diamond {{ background-color: #00b0f0; color: #fff; }}
+        .legend .elite {{ background-color: #8e44ad; color: #fff; }}
+        .legend .gold {{ background-color: #f39c12; color: #fff; }}
+        .legend .silver {{ background-color: #bdc3c7; color: #fff; }}
+        .legend .bronze {{ background-color: #cd7f32; color: #fff; }}
+
+        /* Graph Button */
+        .graph-button {{
+            display: block;
+            margin: 30px auto;
+            padding: 10px 20px;
+            background-color: #12c928;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }}
+        .graph-button:hover {{
+            background-color: #007bb0;
+        }}
+
+        /* Graph Container */
+        #graph-container {{
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }}
+        iframe {{
+            width: 60%;
+            height: 60%;
+            border: none;
+        }}
+    </style>
+    <script>
+        // Function to toggle the visibility of the graph container
+        function toggleGraph() {{
+            var graphContainer = document.getElementById("graph-container");
+            if (graphContainer.style.display === "none") {{
+                graphContainer.style.display = "block";
+                graphContainer.scrollIntoView && graphContainer.scrollIntoView({{ behavior: "smooth" }});
+            }} else {{
+                graphContainer.style.display = "none";
+            }}
+        }}
+    </script>
+</head>
+<body>
+    <!-- Player Info Section -->
+    <h1>{player_name} Stats</h1>
+    <img src="{image_url}" alt="{player_name}'s Picture" width="200">
+    <h3>Anticipated Player Rank: {pRank}</h3>
+    <h3>24-25 Season Salary: {salary}</h3>
+    <h3>Predicted Salary: {predSalary}</h3>
+
+    <!-- Basic Info Table -->
+    <table>
+        <tr>
+            <th>Team</th><td>{team}</td>
+            <th>Height</th><td>{height}</td>
+            <th>Weight</th><td>{weight}</td>
+            <th>Country</th><td>{country}</td>
+        </tr>
+        <tr>
+            <th>Age</th><td>{age}</td>
+            <th>Birthday</th><td>{birthday}</td>
+            <th>Draft</th><td>{draft}</td>
+            <th>Experience</th><td>{experience}</td>
+        </tr>
+    </table>
+
+    <!-- Performance Stats Table -->
+    <table>
+        <tr>
+            <th>PPG</th><td class="stat-box" style="background-color: {ppg_color};">{ppg}</td>
+            <th>APG</th><td class="stat-box" style="background-color: {apg_color};">{apg}</td>
+            <th>RPG</th><td class="stat-box" style="background-color: {rpg_color};">{rpg}</td>
+            <th>+/-</th><td class="stat-box" style="background-color: {pm_color};">{pm}</td>
+        </tr>
+    </table>
+
+    <!-- Legend Section -->
+    <div class="legend">
+        <h2>Player Tier Legend</h2>
+        <div class="diamond">Superstar Tier (Top 1-5%)</div>
+        <div class="elite">All-Star Tier (Next 10-15%)</div>
+        <div class="gold">Solid Starter Tier (Next 25-30%)</div>
+        <div class="silver">Rotation/Bench Tier (Next 25-30%)</div>
+        <div class="bronze">Development Tier (Bottom 15-20%)</div>
+    </div>
+
+    <!-- Graph Section -->
+    <button class="graph-button" onclick="toggleGraph()">Show Graph</button>
+    <div id="graph-container">
+        <iframe src="interactive_bubble_plot.html"></iframe>
+    </div>
+</body>
+</html>
+"""
 
     graph_url = "interactive_bubble_plot.html"
 
@@ -239,7 +423,9 @@ def updateDashboard(playerData):
         apg_color=colors[2],
         pm_color=colors[3],
         graph_url=graph_url,
-        pRank = round(placement)
+        pRank = round(placement),
+        salary = playerData['SALARY'].iloc[0],
+        predSalary = playerData['PREDICTED_SALARY'].iloc[0]
         
     )
     # Step 3: Write to an HTML file
