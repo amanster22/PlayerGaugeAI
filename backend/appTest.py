@@ -12,7 +12,7 @@ from createCharts import interactiveBubblePlot
 
 
 
-updateData()
+updateData('2024-25')
 
 def normalize_text(text):
     normalized_text = unicodedata.normalize('NFD', text)  # Decompose characters
@@ -131,7 +131,7 @@ else:
     playerStats = playerData[stats_columns[:-1]].iloc[0].tolist()
     playerSalary = playerData[stats_columns].iloc[0, -1] # extract last column of row
     predicted_salary = predict_salary_rf(rf_model, scaler, playerStats)
-    playerData['predicted_salary'] = predicted_salary
+    playerData['PREDICTED_SALARY'] = predicted_salary
     print(f"The predicted salary for {playerName} is: ${predicted_salary:,.2f}")
 
     if predicted_salary - playerSalary > 1500000:
