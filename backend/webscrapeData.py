@@ -111,3 +111,4 @@ def updateData(season_id):
     # Save the merged DataFrame to CSV without index
     merged_df.to_excel('../database/merged.xlsx')
     merged_df.to_csv('../database/merged.csv',index=False)
+    print('updated Data')

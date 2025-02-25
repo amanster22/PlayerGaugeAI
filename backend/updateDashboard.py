@@ -1,372 +1,86 @@
 def updateDashboard(playerData):
     html_template = """
-    <html>
+    <html lang="en">
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{player_name} Stats</title>
-        <style>
-            body {{
-                font-family: 'Arial', sans-serif;
-                line-height: 1.6;
-                margin: 20px;
-                color: #333;
-                background-color: GhostWhite;
-            }}
-            h1 {{
-                text-align: center;
-                color: #555;
-            }}
-            h3 {{
-                text-align: center;
-                color: #347deb;
-            }}
-            img {{
-                display: block;
-                margin: 0 auto;
-                border-radius: 10px;
-            }}
-            table {{
-                width: 80%;
-                margin: 20px auto;
-                border-collapse: collapse;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                background-color: #fff;
-            }}
-            th, td {{
-                padding: 10px;
-                border: 1px solid #ddd;
-                text-align: left;
-            }}
-            th {{
-                background-color: #f4f4f4;
-                color: #333;
-                font-weight: bold;
-            }}
-            tr:nth-child(even) {{
-                background-color: #f9f9f9;
-            }}
-            tr:hover {{
-                background-color: #f1f1f1;
-            }}
-            .stat-box {{
-                padding: 10px;
-                text-align: center;
-                font-weight: bold;
-                color: #fff;
-            }}
-            .legend {{
-                margin-top: 30px;
-                padding: 10px;
-                text-align: center;
-                background-color: #fff;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            }}
-            .legend h2 {{
-                margin-bottom: 20px;
-            }}
-            .legend div {{
-                margin-bottom: 10px;
-                font-weight: bold;
-            }}
-            .legend .diamond {{
-                background-color: #00b0f0; /* Blue for Diamond */
-                color: #fff;
-            }}
-            .legend .elite {{
-                background-color: #8e44ad; /* Purple for Elite */
-                color: #fff;
-            }}
-            .legend .gold {{
-                background-color: #f39c12; /* Gold */
-                color: #fff;
-            }}
-            .legend .silver {{
-                background-color: #bdc3c7; /* Silver */
-                color: #fff;
-            }}
-            .legend .bronze {{
-                background-color: #cd7f32; /* Bronze */
-                color: #fff;
-            }}
-            .graph-button {{
-                display: block;
-                margin: 30px auto;
-                padding: 10px 20px;
-                background-color: #12c928;
-                color: white;
-                text-align: center;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
-                cursor: pointer;
-            }}
-            .graph-button:hover {{
-                background-color: #007bb0;
-            }}
-            /* Initially hide the graph container */
-            #graph-container {{
-                display: none;
-                margin-top: 30px;
-                text-align: center;
-            }}
-            .graph-container h2{{
-                color: 00FF00; /* Text color */
-                font-family: Arial, sans-serif; /* Font set to Arial */
-                font-weight: bold; /* Bold text */
-                text-align: center; /* Centers text */
-            }}
-            iframe {{
-                width: 60%;
-                height: 60%;
-                border: none;
-            }}
-        </style>
-        <script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-100 text-gray-900">
+        <div class="max-w-4xl mx-auto p-6">
+            <h1 class="text-3xl font-bold text-center text-gray-700">{player_name} Stats</h1>
+            <div class="flex flex-col items-center mt-4">
+                <img src="{image_url}" alt="{player_name}'s Picture" class="rounded-lg shadow-md w-48">
+                <h3 class="text-xl font-semibold text-blue-600 mt-4">Anticipated Player Rank: {pRank}</h3>
+                <h3 class="text-xl font-semibold text-green-600">24-25 Season Salary: {salary}</h3>
+                <h3 class="text-xl font-semibold text-red-600">Predicted Salary: {predSalary}</h3>
+            </div>
+            
+            <div class="mt-6">
+                <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                    <tbody>
+                        <tr class="bg-gray-100">
+                            <th class="px-4 py-2 border">Team</th><td class="px-4 py-2 border">{team}</td>
+                            <th class="px-4 py-2 border">Height</th><td class="px-4 py-2 border">{height}</td>
+                            <th class="px-4 py-2 border">Weight</th><td class="px-4 py-2 border">{weight}</td>
+                            <th class="px-4 py-2 border">Country</th><td class="px-4 py-2 border">{country}</td>
+                        </tr>
+                        <tr>
+                            <th class="px-4 py-2 border">Age</th><td class="px-4 py-2 border">{age}</td>
+                            <th class="px-4 py-2 border">Birthday</th><td class="px-4 py-2 border">{birthday}</td>
+                            <th class="px-4 py-2 border">Draft</th><td class="px-4 py-2 border">{draft}</td>
+                            <th class="px-4 py-2 border">Experience</th><td class="px-4 py-2 border">{experience}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        
+            <div class="mt-6">
+                <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                    <tbody>
+                        <tr class="text-center">
+                            <th class="px-4 py-2 border">PPG</th><td class="px-4 py-2 border text-white font-bold" style="background-color: {ppg_color};">{ppg}</td>
+                            <th class="px-4 py-2 border">APG</th><td class="px-4 py-2 border text-white font-bold" style="background-color: {apg_color};">{apg}</td>
+                            <th class="px-4 py-2 border">RPG</th><td class="px-4 py-2 border text-white font-bold" style="background-color: {rpg_color};">{rpg}</td>
+                            <th class="px-4 py-2 border">+/-</th><td class="px-4 py-2 border text-white font-bold" style="background-color: {pm_color};">{pm}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-center">Player Tier Legend</h2>
+                <div class="mt-4 space-y-2 text-center">
+                    <div class="bg-blue-500 text-white py-2 rounded-lg">Superstar Tier (Top 1-5%)</div>
+                    <div class="bg-purple-500 text-white py-2 rounded-lg">All-Star Tier (Next 10-15%)</div>
+                    <div class="bg-yellow-500 text-white py-2 rounded-lg">Solid Starter Tier (Next 25-30%)</div>
+                    <div class="bg-gray-400 text-white py-2 rounded-lg">Rotation/Bench Tier (Next 25-30%)</div>
+                    <div class="bg-orange-600 text-white py-2 rounded-lg">Development Tier (Bottom 15-20%)</div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6">
+                <button onclick="toggleGraph()" class="px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-700">Show Graph</button>
+            </div>
+
+            <div id="graph-container" class="hidden mt-6 text-center">
+                <iframe src="{graph_url}" class="w-full h-96 border-none"></iframe>
+            </div>
+        </div>
+
+        <script>
             function toggleGraph() {{
                 var graphContainer = document.getElementById("graph-container");
-                if (graphContainer.style.display === "none") {{
-                    graphContainer.style.display = "block";
-                    graphContainer.scrollIntoView && graphContainer.scrollIntoView({{ behavior: "smooth" }});
-                }} else {{
-                    graphContainer.style.display = "none";
+                graphContainer.classList.toggle("hidden");
+                if (!graphContainer.classList.contains("hidden")) {{
+                    graphContainer.scrollIntoView({{ behavior: "smooth" }});
                 }}
             }}
         </script>
-
-    </head>
-    <body>
-        <h1>{player_name} Stats</h1>
-        <img src="{image_url}" alt="{player_name}'s Picture" width="200">
-        <h3>Anticipated Player Rank: {pRank}</h3>
-        <h3>24-25 Season Salary: {salary}</h3>
-        <h3>Predicted Salary: {predSalary}</h3>
-        <table>
-            <tr>
-                <th>Team</th><td>{team}</td>
-                <th>Height</th><td>{height}</td>
-                <th>Weight</th><td>{weight}</td>
-                <th>Country</th><td>{country}</td>
-            </tr>
-            <tr>
-                <th>Age</th><td>{age}</td>
-                <th>Birthday</th><td>{birthday}</td>
-                <th>Draft</th><td>{draft}</td>
-                <th>Experience</th><td>{experience}</td>
-            </tr>
-        </table>
-
-        <table>
-            <tr>
-                <th>PPG</th><td class="stat-box" style="background-color: {ppg_color};">{ppg}</td>
-                <th>APG</th><td class="stat-box" style="background-color: {apg_color};">{apg}</td>
-                <th>RPG</th><td class="stat-box" style="background-color: {rpg_color};">{rpg}</td>
-                <th>+/-</th><td class="stat-box" style="background-color: {pm_color};">{pm}</td>
-            </tr>
-        </table>
-        <!-- Legend Section -->
-        <div class="legend">
-            <h2>Player Tier Legend</h2>
-            <div class="diamond">Superstar Tier (Top 1-5%)</div>
-            <div class="elite">All-Star Tier (Next 10-15%)</div>
-            <div class="gold">Solid Starter Tier (Next 25-30%)</div>
-            <div class="silver">Rotation/Bench Tier (Next 25-30%)</div>
-            <div class="bronze">Development Tier (Bottom 15-20%)</div>
-
-        </div>
-        
-        <!-- Graph Button -->
-        <button class="graph-button" onclick="toggleGraph()">Show Graph</button>
-
-        <!-- Graph Container (Initially Hidden) -->
-        <div id="graph-container">
-            
-            <iframe src="interactive_bubble_plot.html"></iframe>
-            
-        </div>
-
-        
     </body>
     </html>
-
     """
-
-
-    html_template = """
-<html>
-<head>
-    <title>{player_name} *Stats</title>
-    <style>
-        /* General Styles */
-        body {{
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-            color: #333;
-            background-color: GhostWhite;
-        }}
-        h1 {{
-            text-align: center;
-            color: #555;
-        }}
-        h3 {{
-            text-align: center;
-            color: #347deb;
-        }}
-        img {{
-            display: block;
-            margin: 0 auto;
-            border-radius: 10px;
-        }}
-
-        /* Table Styles */
-        table {{
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }}
-        th, td {{
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }}
-        th {{
-            background-color: #f4f4f4;
-            color: #333;
-            font-weight: bold;
-        }}
-        tr:nth-child(even) {{
-            background-color: #f9f9f9;
-        }}
-        tr:hover {{
-            background-color: #f1f1f1;
-        }}
-
-        /* Stat Box Styles */
-        .stat-box {{
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            color: #fff;
-        }}
-
-        /* Legend Section */
-        .legend {{
-            margin-top: 30px;
-            padding: 10px;
-            text-align: center;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }}
-        .legend h2 {{
-            margin-bottom: 20px;
-        }}
-        .legend div {{
-            margin-bottom: 10px;
-            font-weight: bold;
-        }}
-        .legend .diamond {{ background-color: #00b0f0; color: #fff; }}
-        .legend .elite {{ background-color: #8e44ad; color: #fff; }}
-        .legend .gold {{ background-color: #f39c12; color: #fff; }}
-        .legend .silver {{ background-color: #bdc3c7; color: #fff; }}
-        .legend .bronze {{ background-color: #cd7f32; color: #fff; }}
-
-        /* Graph Button */
-        .graph-button {{
-            display: block;
-            margin: 30px auto;
-            padding: 10px 20px;
-            background-color: #12c928;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-        }}
-        .graph-button:hover {{
-            background-color: #007bb0;
-        }}
-
-        /* Graph Container */
-        #graph-container {{
-            display: none;
-            margin-top: 30px;
-            text-align: center;
-        }}
-        iframe {{
-            width: 60%;
-            height: 60%;
-            border: none;
-        }}
-    </style>
-    <script>
-        // Function to toggle the visibility of the graph container
-        function toggleGraph() {{
-            var graphContainer = document.getElementById("graph-container");
-            if (graphContainer.style.display === "none") {{
-                graphContainer.style.display = "block";
-                graphContainer.scrollIntoView && graphContainer.scrollIntoView({{ behavior: "smooth" }});
-            }} else {{
-                graphContainer.style.display = "none";
-            }}
-        }}
-    </script>
-</head>
-<body>
-    <!-- Player Info Section -->
-    <h1>{player_name} Stats</h1>
-    <img src="{image_url}" alt="{player_name}'s Picture" width="200">
-    <h3>Anticipated Player Rank: {pRank}</h3>
-    <h3>24-25 Season Salary: {salary}</h3>
-    <h3>Predicted Salary: {predSalary}</h3>
-
-    <!-- Basic Info Table -->
-    <table>
-        <tr>
-            <th>Team</th><td>{team}</td>
-            <th>Height</th><td>{height}</td>
-            <th>Weight</th><td>{weight}</td>
-            <th>Country</th><td>{country}</td>
-        </tr>
-        <tr>
-            <th>Age</th><td>{age}</td>
-            <th>Birthday</th><td>{birthday}</td>
-            <th>Draft</th><td>{draft}</td>
-            <th>Experience</th><td>{experience}</td>
-        </tr>
-    </table>
-
-    <!-- Performance Stats Table -->
-    <table>
-        <tr>
-            <th>PPG</th><td class="stat-box" style="background-color: {ppg_color};">{ppg}</td>
-            <th>APG</th><td class="stat-box" style="background-color: {apg_color};">{apg}</td>
-            <th>RPG</th><td class="stat-box" style="background-color: {rpg_color};">{rpg}</td>
-            <th>+/-</th><td class="stat-box" style="background-color: {pm_color};">{pm}</td>
-        </tr>
-    </table>
-
-    <!-- Legend Section -->
-    <div class="legend">
-        <h2>Player Tier Legend</h2>
-        <div class="diamond">Superstar Tier (Top 1-5%)</div>
-        <div class="elite">All-Star Tier (Next 10-15%)</div>
-        <div class="gold">Solid Starter Tier (Next 25-30%)</div>
-        <div class="silver">Rotation/Bench Tier (Next 25-30%)</div>
-        <div class="bronze">Development Tier (Bottom 15-20%)</div>
-    </div>
-
-    <!-- Graph Section -->
-    <button class="graph-button" onclick="toggleGraph()">Show Graph</button>
-    <div id="graph-container">
-        <iframe src="interactive_bubble_plot.html"></iframe>
-    </div>
-</body>
-</html>
-"""
 
     graph_url = "interactive_bubble_plot.html"
 

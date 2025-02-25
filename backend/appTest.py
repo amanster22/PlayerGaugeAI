@@ -14,6 +14,7 @@ from createCharts import interactiveBubblePlot
 
 updateData('2024-25')
 
+
 def normalize_text(text):
     normalized_text = unicodedata.normalize('NFD', text)  # Decompose characters
     normalized_text = ''.join([c for c in normalized_text if not unicodedata.combining(c)])  # Remove accents
