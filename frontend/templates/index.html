@@ -4,100 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Search Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .dashboard {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 300px;
-        }
-
-        .dashboard h1 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .dashboard input[type="text"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-
-        .dashboard button {
-            width: 100%;
-            padding: 10px;
+        /* Glowing Rainbow Effect on Button Hover */
+        .rainbow-glow {
             background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
-        .dashboard button:hover {
-            background-color: #45a049;
+        .rainbow-glow:hover {
+            background-color: #4CAF50;
+            box-shadow: 0 0 10px 2px rgba(0, 255, 255, 0.7), 0 0 20px 4px rgba(255, 0, 255, 0.7), 0 0 30px 6px rgba(255, 255, 0, 0.7);
         }
 
-        #result {
-            margin-top: 20px;
-            color: #333;
+        .rainbow-glow:active {
+            box-shadow: none;
         }
     </style>
 </head>
-<body>
-    <div class="dashboard">
-        <h1>Search Player</h1>
-        <input type="text" id="player-name" name="playerName" placeholder="Enter player's name" required>
-        <button onclick="searchPlayer()">Search</button>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-6">NBA Stats Dashboard</h1>
+        
+        <!-- Search Bar and Button -->
+        <div class="flex justify-center mb-6">
+            <input id="searchPlayer" type="text" placeholder="Search Player..." 
+                class="w-full max-w-md p-2 rounded-lg text-black" oninput="searchPlayer()">
+            <button class="ml-4 p-2 rounded-lg text-white rainbow-glow" onclick="searchPlayer()">Search</button>
+        </div>
+        
+        <!-- Player Search Result -->
+        <div id="playerResult" class="text-center hidden">
+            <h2 class="text-2xl font-semibold">Player Data</h2>
+            <p id="playerStats" class="mt-2"></p>
+        </div>
 
-        <div id="result"></div>
+        <!-- Leaders Sections -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-gray-800 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold">Salary Leaders</h2>
+                <ul id="salaryLeaders" class="mt-2"></ul>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold">Points Leaders</h2>
+                <ul id="pointsLeaders" class="mt-2"></ul>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold">Rebounds Leaders</h2>
+                <ul id="reboundsLeaders" class="mt-2"></ul>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold">Assists Leaders</h2>
+                <ul id="assistsLeaders" class="mt-2"></ul>
+            </div>
+            <div class="bg-gray-800 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold">Steals Leaders</h2>
+                <ul id="stealsLeaders" class="mt-2"></ul>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Function to handle the search button click
+        // Function to handle the search input and fetch player data
         function searchPlayer() {
-            const playerName = document.getElementById('player-name').value;
-            if (!playerName) {
-                alert('Please enter a player name');
-                return;
-            }
-
-            // Make a POST request to the Flask backend
-            fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `playerName=${encodeURIComponent(playerName)}`
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('result').innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('result').innerHTML = 'An error occurred. Please try again later.';
-            });
+            const query = document.getElementById('searchPlayer').value.toLowerCase();
+            const resultDiv = document.getElementById('playerResult');
+            const statsDiv = document.getElementById('playerStats');
+            
+            // Make an API call to your backend to fetch player stats based on the search query
+            fetch(`/search_player?playerName=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.player) {
+                        statsDiv.innerHTML = `${data.player.name}: ${data.player.ppg} PPG, ${data.player.rpg} RPG, ${data.player.apg} APG, ${data.player.spg} SPG, Salary: ${data.player.salary}`;
+                        resultDiv.classList.remove('hidden');
+                    } else {
+                        resultDiv.classList.add('hidden');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching player data:', error);
+                    resultDiv.classList.add('hidden');
+                });
         }
     </script>
-
-<iframe src="../../backend/playerDashboard.html" title="Player Dashboard"></iframe>
-
 </body>
 </html>

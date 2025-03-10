@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split, cross_val_score, GridSearc
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score
-from createCharts import interactiveBubblePlot
+from createCharts import interactiveBubblePlot, gen_ppg_plot, gen_apg_plot, gen_rpg_plot, gen_fan_plot
 
 
 
@@ -21,8 +21,14 @@ def normalize_text(text):
     return normalized_text.lower()
 
 # Get data from csv file and create updated dataframe: converting each stat to per game stat
+gen_ppg_plot()
+gen_apg_plot()
+gen_rpg_plot()
+gen_fan_plot
 data = pd.read_csv('../database/merged.csv')
+
 data.rename(columns={'2024-25': 'SALARY'}, inplace=True)
+
 data['PLAYER_NAME'] = data['PLAYER_NAME'].astype(str)
 data['PTS'] = data['PTS'] / data['GP']
 data['AST'] = data['AST'] / data['GP']
@@ -44,6 +50,8 @@ X = data[selected_features]
 y = data['SALARY']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
 
 # Standardizing Features
 scaler = StandardScaler()
