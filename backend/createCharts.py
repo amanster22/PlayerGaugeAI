@@ -4,15 +4,15 @@ import seaborn as sns
 import pandas as pd
 import plotly.express as px
 from scipy.stats import linregress
-
+import plotly.graph_objects as go
 # updateData()
 
 def interactiveBubblePlot(data, player_name=None):
     # Prepare the data
-    
+    data['SCALED_AGE'] = (data['AGE'] - data['AGE'].min()) / (data['AGE'].max() - data['AGE'].min()) * 40 + 5
+    data['MARKER_SIZE'] = 5
     data['SALARY_MILLIONS'] = data['SALARY'] / 1000000  # Salary in millions
     data['SCALED_PTS'] = round(data['NBA_FANTASY_PTS'] / data['SALARY_MILLIONS'].max()*500)
-    print(type(data['NBA_FANTASY_PTS_RANK']))
     # data['NBA_FANTASY_PTS_RANK'] = int(data['NBA_FANTASY_PTS_RANK'])
     # Highlight a player if provided
     if player_name:
@@ -26,11 +26,12 @@ def interactiveBubblePlot(data, player_name=None):
         # If no player is highlighted, default to blue or another color
         data['PLAYER'] = 'blue'  # Change to 'blue' or any other fallback color
     # Create the interactive bubble plot
+    radius = 10
     fig = px.scatter(
         data,
         x='NBA_FANTASY_PTS',
         y='SALARY_MILLIONS',
-        size='SCALED_PTS',
+        size='SCALED_AGE',
         color='PLAYER', 
         hover_name='PLAYER_NAME',
         hover_data={
@@ -71,11 +72,11 @@ def interactiveBubblePlot(data, player_name=None):
 
 
     # Save the interactive plot as an HTML file
+    fig.write_html("../frontend/templates/interactive_bubble_plot.html")
     fig.write_html("interactive_bubble_plot.html")
 
 
-import pandas as pd
-import plotly.graph_objects as go
+
 
 
 def gen_ppg_plot():
@@ -90,7 +91,7 @@ def gen_ppg_plot():
 
     # Get top 5 players
     top5 = ppgSalary.head(5)
-    print(top5)
+
 
     # Create bar chart with heatmap-based coloring on salary
     fig = go.Figure()
@@ -113,6 +114,7 @@ def gen_ppg_plot():
     )
 
     # Save figure to HTML
+    fig.write_html("../frontend/templates/top5_players_ppg.html")
     fig.write_html("top5_players_ppg.html")
 
 def gen_apg_plot():
@@ -127,7 +129,7 @@ def gen_apg_plot():
 
     # Get top 5 players
     top5 = apgSalary.head(5)
-    print(top5)
+
 
     # Create bar chart with heatmap-based coloring on salary
     fig = go.Figure()
@@ -150,6 +152,7 @@ def gen_apg_plot():
     )
 
     # Save figure to HTML
+    fig.write_html("../frontend/templates/top5_players_apg.html")
     fig.write_html("top5_players_apg.html")
 
 def gen_rpg_plot():
@@ -164,7 +167,7 @@ def gen_rpg_plot():
 
     # Get top 5 players
     top5 = rpgSalary.head(5)
-    print(top5)
+
 
     # Create bar chart with heatmap-based coloring on salary
     fig = go.Figure()
@@ -187,6 +190,7 @@ def gen_rpg_plot():
     )
 
     # Save figure to HTML
+    fig.write_html("../frontend/templates/top5_players_rpg.html")
     fig.write_html("top5_players_rpg.html")
 
 def gen_fan_plot():
@@ -201,7 +205,7 @@ def gen_fan_plot():
 
     # Get top 5 players
     top5 = fpgSalary.head(5)
-    print(top5)
+
 
     # Create bar chart with heatmap-based coloring on salary
     fig = go.Figure()
@@ -224,4 +228,5 @@ def gen_fan_plot():
     )
 
     # Save figure to HTML
+    fig.write_html("../frontend/templates/top5_players_fpg.html")
     fig.write_html("top5_players_fpg.html")

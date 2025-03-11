@@ -171,10 +171,7 @@ def updateDashboard(playerData):
     placement = playerData['NBA_FANTASY_PTS_RANK'].iloc[0]
     for stat in gradeStats:
         rank = playerData[stat + "_RANK"].iloc[0]
-        print(stat,"rank:",rank)
         ranks = [15,75,250,375]
-    
-
 
         if rank <= ranks[0]:  # Diamond - Top 5%
             colors.append("00b0f0")
@@ -186,9 +183,6 @@ def updateDashboard(playerData):
             colors.append("silver")
         else:  # Bronze - Bottom 25%
             colors.append("#753600")
-
-
-
 
     # Populate stats (assuming player_data contains the correct fields)
     html_content = html_template.format(
@@ -216,8 +210,8 @@ def updateDashboard(playerData):
         rpg_graph_url = rpg_graph_url,
         fpg_graph_url = fpg_graph_url,
         pRank = round(placement),
-        salary = playerData['SALARY'].iloc[0],
-        predSalary = playerData['PREDICTED_SALARY'].iloc[0]
+        salary = f"{playerData['SALARY'].iloc[0]:,.2f}",
+        predSalary = f"{round(playerData['PREDICTED_SALARY'].iloc[0]):,.2f}"
         
     )
     # Step 3: Write to an HTML file

@@ -37,12 +37,10 @@ data['MIN'] = data['MIN'] / data['GP']
 data['FGA'] = data['FGA'] / data['GP']
 data['FGM'] = data['FGM'] / data['GP']
 data['PLUS_MINUS'] = data['PLUS_MINUS'] / data['GP']
-# Normalize the player names in the dataset
 data['NORMALIZED_NAME'] = data['PLAYER_NAME'].apply(normalize_text)
 data['NBA_FANTASY_PTS'] = data['NBA_FANTASY_PTS'] / data['GP']
 data = data.dropna(subset=['SALARY'])
 data['SALARY'] = data['SALARY'].replace('[\$,]', '', regex=True).str.strip()
-# data['SALARY'] = pd.to_numeric(data['SALARY'])
 data['SALARY'] = pd.to_numeric(data['SALARY'], errors='coerce')
 
 selected_features = ['GP', 'AGE', 'PTS', 'AST', 'REB', 'NBA_FANTASY_PTS', 'MIN', 'PLUS_MINUS', 'FGM','FGA','W_PCT']
@@ -58,36 +56,10 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# # GridSearchCV for hyperparameter tuning
-# param_grid = {
-#     'n_estimators': [50, 100, 200],
-#     'max_depth': [None, 10, 20],
-#     'min_samples_split': [2, 5, 10]
-# }
-# grid_search = GridSearchCV(RandomForestRegressor(random_state=42), param_grid, cv=5, scoring='r2')
-# grid_search.fit(X_train_scaled, y_train)
-
-# print(f"Best parameters: {grid_search.best_params_}")
-# print(f"Best cross-validated R-squared: {grid_search.best_score_:.4f}")
-
 # Training the Random Forest Regressor Model
 rf_model = RandomForestRegressor(max_depth=None, min_samples_split=10, n_estimators=100, random_state=42)
 rf_model.fit(X_train_scaled, y_train)
 
-# Evaluating Model
-# y_rf_pred = rf_model.predict(X_test_scaled)
-# rf_r2 = r2_score(y_test, y_rf_pred)
-# rf_mse = mean_squared_error(y_test, y_rf_pred)
-
-# print(f"Random Forest R-squared: {rf_r2:.4f}")
-# print(f"Random Forest Mean Squared Error: {rf_mse:.2f}")
-
-# Cross-validation and GridSearchCV for hyperparameter tuning
-# rf_model_cv = RandomForestRegressor(random_state=42)
-# scores = cross_val_score(rf_model_cv, X, y, cv=5, scoring='r2')  # 5-fold cross-validation
-# print(f"Cross-validated R-squared: {scores.mean():.4f}")
-
-# Refitting model with best parameters
 
 # Salary Prediction Function
 def predict_salary_rf(model, scaler, stats):
@@ -122,8 +94,6 @@ playerName = playerData['PLAYER_NAME'].iloc[0]
 stats_columns = selected_features[:]
 stats_columns.append('SALARY')
 
-print('selected_features: ',selected_features)
-print('stats_columns: ',stats_columns)
 feature_importances = rf_model.feature_importances_
 
 importance_df = pd.DataFrame({
@@ -133,7 +103,6 @@ importance_df = pd.DataFrame({
 
 importance_df = importance_df.sort_values(by='Importance', ascending=False)
 print(importance_df)
-
 if playerData.empty:
     print("Player not found in the dataset.")
 else:
