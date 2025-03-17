@@ -9,19 +9,29 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score
 from createCharts import interactiveBubblePlot
+from fuzzywuzzy import process
 
 
 
 updateData('2024-25')
+data = pd.read_csv('../database/merged.csv')
+player_dict = dict(zip(data['PLAYER_NAME'], data['PLAYER_ID']))
 
-
+# Function to find the closest matching player
+def get_player_id(user_input):
+    best_match, score = process.extractOne(user_input, player_dict.keys())
+    
+    if score > 80:  # Set a threshold for similarity
+        return player_dict[best_match]  # Return the corresponding ID
+    else:
+        return "No close match found."
 def normalize_text(text):
     normalized_text = unicodedata.normalize('NFD', text)  # Decompose characters
     normalized_text = ''.join([c for c in normalized_text if not unicodedata.combining(c)])  # Remove accents
     return normalized_text.lower()
 
 # Get data from csv file and create updated dataframe: converting each stat to per game stat
-data = pd.read_csv('../database/merged.csv')
+
 data.rename(columns={'2024-25': 'SALARY'}, inplace=True)
 data['PLAYER_NAME'] = data['PLAYER_NAME'].astype(str)
 data['PTS'] = data['PTS'] / data['GP']
@@ -98,16 +108,10 @@ def predict_salary_rf(model, scaler, stats):
 
 # Get specified player data via User Input and Evaluate performance via contract
 nameInput=input("What NBA player would you like to analyze first?: ")
-normalizedName = normalize_text(nameInput)
+name_id = get_player_id(nameInput)
 
-name_parts = normalizedName.split(' ')
 
-if len(name_parts) == 2:
-    playerData = data[data['NORMALIZED_NAME'] == normalizedName]
-else:
-    print("Error: The name doesn't contain exactly two parts.")
-    playerData = data[data['NICKNAME'] == normalizedName.capitalize()]
-
+playerData = data[data['PLAYER_ID'] == name_id]
 playerName = playerData['PLAYER_NAME'].iloc[0]
 
 
