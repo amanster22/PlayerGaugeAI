@@ -1,103 +1,152 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Search Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
 
-        .dashboard {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 300px;
-        }
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>James Wiseman Stats</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-100 text-gray-900">
 
-        .dashboard h1 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
+        <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo and Title -->
+            <div class="flex items-center space-x-4">
+                <img src="https://via.placeholder.com/50" alt="Logo" class="w-10 h-10 rounded-full">
+                <h1 class="text-2xl font-bold">PlayerGaugeAI</h1>
+            </div>
+            <!-- Navigation Links -->
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#" class="hover:text-blue-200">Home</a></li>
+                    <li><a href="#" class="hover:text-blue-200">Players</a></li>
+                    <li><a href="#" class="hover:text-blue-200">About</a></li>
+                    <li><a href="#" class="hover:text-blue-200">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+        
 
-        .dashboard input[type="text"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
+            <!-- Leaders Sections -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-center">PG Leaders</h3>
+                    <div id="pg-leaders-graph" class="mt-4">
+                        <iframe src="top5_players_ppg.html" class="w-full h-96 border-none"></iframe>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-center">AST Leaders</h3>
+                    <div id="ast-leaders-graph" class="mt-4">
+                        <iframe src="top5_players_apg.html" class="w-full h-96 border-none"></iframe>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-center">REB Leaders</h3>
+                    <div id="reb-leaders-graph" class="mt-4">
+                        <iframe src="top5_players_rpg.html" class="w-full h-96 border-none"></iframe>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-center">Fantasy Points Leaders</h3>
+                    <div id="salary-leaders-graph" class="mt-4">
+                        <iframe src="top5_players_fpg.html" class="w-full h-96 border-none"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="max-w-4xl mx-auto p-6">
+            <!-- Search Bar and Button -->
+        <div class="flex justify-center items-center space-x-4">
+            <input
+                type="text"
+                id="playerName"
+                placeholder="Enter player name"
+                class="w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+                id="searchButton"
+                class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+                Search
+            </button>
+        </div>
+            <!-- Player Search Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                <h2 class="text-2xl font-semibold text-center mb-6">Player Search</h2>
+                <div class="flex flex-col items-center">
+                    <img src="https://www.basketball-reference.com/req/202012291/images/headshots/wisemja01.jpg" alt="James Wiseman's Picture" class="rounded-lg shadow-md w-48">
+                    <h3 class="text-xl font-semibold text-blue-600 mt-4">Anticipated Player Rank: 531</h3>
+                    <h3 class="text-xl font-semibold text-green-600">24-25 Season Salary: 2237691</h3>
+                    <h3 class="text-xl font-semibold text-red-600">Predicted Salary: 3570032.1874584784</h3>
+                </div>
 
-        .dashboard button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
+                <div class="mt-6">
+                    <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                        <tbody>
+                            <tr class="bg-gray-100">
+                                <th class="px-4 py-2 border">Team</th><td class="px-4 py-2 border">IND</td>
+                                <th class="px-4 py-2 border">Height</th><td class="px-4 py-2 border">UNK</td>
+                                <th class="px-4 py-2 border">Weight</th><td class="px-4 py-2 border">UNK</td>
+                                <th class="px-4 py-2 border">Country</th><td class="px-4 py-2 border">UNK</td>
+                            </tr>
+                            <tr>
+                                <th class="px-4 py-2 border">Age</th><td class="px-4 py-2 border">23.0</td>
+                                <th class="px-4 py-2 border">Birthday</th><td class="px-4 py-2 border">UNK</td>
+                                <th class="px-4 py-2 border">Draft</th><td class="px-4 py-2 border">UNK</td>
+                                <th class="px-4 py-2 border">Experience</th><td class="px-4 py-2 border">UNK</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-        .dashboard button:hover {
-            background-color: #45a049;
-        }
+                <div class="mt-6">
+                    <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                        <tbody>
+                            <tr class="text-center">
+                                <th class="px-4 py-2 border">PPG</th><td class="px-4 py-2 border text-white font-bold" style="background-color: #753600;">6.0</td>
+                                <th class="px-4 py-2 border">APG</th><td class="px-4 py-2 border text-white font-bold" style="background-color: #753600;">0.0</td>
+                                <th class="px-4 py-2 border">RPG</th><td class="px-4 py-2 border text-white font-bold" style="background-color: #753600;">1.0</td>
+                                <th class="px-4 py-2 border">+/-</th><td class="px-4 py-2 border text-white font-bold" style="background-color: silver;">-4.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-        #result {
-            margin-top: 20px;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-    <div class="dashboard">
-        <h1>Search Player</h1>
-        <input type="text" id="player-name" name="playerName" placeholder="Enter player's name" required>
-        <button onclick="searchPlayer()">Search</button>
+            <!-- Player Tier Legend -->
+            <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-center">Player Tier Legend</h2>
+                <div class="mt-4 space-y-2 text-center">
+                    <div class="bg-blue-500 text-white py-2 rounded-lg">Superstar Tier (Top 1-5%)</div>
+                    <div class="bg-purple-500 text-white py-2 rounded-lg">All-Star Tier (Next 10-15%)</div>
+                    <div class="bg-yellow-500 text-white py-2 rounded-lg">Solid Starter Tier (Next 25-30%)</div>
+                    <div class="bg-gray-400 text-white py-2 rounded-lg">Rotation/Bench Tier (Next 25-30%)</div>
+                    <div class="bg-orange-600 text-white py-2 rounded-lg">Development Tier (Bottom 15-20%)</div>
+                </div>
+            </div>
 
-        <div id="result"></div>
-    </div>
+            <!-- Graph Toggle Button -->
+            <div class="text-center mt-6">
+                <button onclick="toggleGraph()" class="px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-700">Show Graph</button>
+            </div>
 
-    <script>
-        // Function to handle the search button click
-        function searchPlayer() {
-            const playerName = document.getElementById('player-name').value;
-            if (!playerName) {
-                alert('Please enter a player name');
-                return;
+            <!-- Graph Container -->
+            <div id="graph-container" class="hidden mt-6 text-center">
+                <iframe src="interactive_bubble_plot.html" class="w-full h-96 border-none"></iframe>
+            </div>
+        </div>
+
+        <script>
+            function toggleGraph() {
+                var graphContainer = document.getElementById("graph-container");
+                graphContainer.classList.toggle("hidden");
+                if (!graphContainer.classList.contains("hidden")) {
+                    graphContainer.scrollIntoView({ behavior: "smooth" });
+                }
             }
-
-            // Make a POST request to the Flask backend
-            fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `playerName=${encodeURIComponent(playerName)}`
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('result').innerHTML = data;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('result').innerHTML = 'An error occurred. Please try again later.';
-            });
-        }
-    </script>
-
-<iframe src="../../backend/playerDashboard.html" title="Player Dashboard"></iframe>
-
-</body>
-</html>
+        </script>
+    </body>
+    </html>
+    

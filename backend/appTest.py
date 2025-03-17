@@ -8,31 +8,27 @@ from sklearn.model_selection import train_test_split, cross_val_score, GridSearc
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score
-from createCharts import interactiveBubblePlot
-from fuzzywuzzy import process
+from createCharts import interactiveBubblePlot, gen_ppg_plot, gen_apg_plot, gen_rpg_plot, gen_fan_plot
 
 
 
 updateData('2024-25')
-data = pd.read_csv('../database/merged.csv')
-player_dict = dict(zip(data['PLAYER_NAME'], data['PLAYER_ID']))
 
-# Function to find the closest matching player
-def get_player_id(user_input):
-    best_match, score = process.extractOne(user_input, player_dict.keys())
-    
-    if score > 80:  # Set a threshold for similarity
-        return player_dict[best_match]  # Return the corresponding ID
-    else:
-        return "No close match found."
+
 def normalize_text(text):
     normalized_text = unicodedata.normalize('NFD', text)  # Decompose characters
     normalized_text = ''.join([c for c in normalized_text if not unicodedata.combining(c)])  # Remove accents
     return normalized_text.lower()
 
 # Get data from csv file and create updated dataframe: converting each stat to per game stat
+gen_ppg_plot()
+gen_apg_plot()
+gen_rpg_plot()
+gen_fan_plot
+data = pd.read_csv('../database/merged.csv')
 
 data.rename(columns={'2024-25': 'SALARY'}, inplace=True)
+
 data['PLAYER_NAME'] = data['PLAYER_NAME'].astype(str)
 data['PTS'] = data['PTS'] / data['GP']
 data['AST'] = data['AST'] / data['GP']
@@ -41,12 +37,10 @@ data['MIN'] = data['MIN'] / data['GP']
 data['FGA'] = data['FGA'] / data['GP']
 data['FGM'] = data['FGM'] / data['GP']
 data['PLUS_MINUS'] = data['PLUS_MINUS'] / data['GP']
-# Normalize the player names in the dataset
 data['NORMALIZED_NAME'] = data['PLAYER_NAME'].apply(normalize_text)
 data['NBA_FANTASY_PTS'] = data['NBA_FANTASY_PTS'] / data['GP']
 data = data.dropna(subset=['SALARY'])
 data['SALARY'] = data['SALARY'].replace('[\$,]', '', regex=True).str.strip()
-# data['SALARY'] = pd.to_numeric(data['SALARY'])
 data['SALARY'] = pd.to_numeric(data['SALARY'], errors='coerce')
 
 selected_features = ['GP', 'AGE', 'PTS', 'AST', 'REB', 'NBA_FANTASY_PTS', 'MIN', 'PLUS_MINUS', 'FGM','FGA','W_PCT']
@@ -55,41 +49,17 @@ y = data['SALARY']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+
+
 # Standardizing Features
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# # GridSearchCV for hyperparameter tuning
-# param_grid = {
-#     'n_estimators': [50, 100, 200],
-#     'max_depth': [None, 10, 20],
-#     'min_samples_split': [2, 5, 10]
-# }
-# grid_search = GridSearchCV(RandomForestRegressor(random_state=42), param_grid, cv=5, scoring='r2')
-# grid_search.fit(X_train_scaled, y_train)
-
-# print(f"Best parameters: {grid_search.best_params_}")
-# print(f"Best cross-validated R-squared: {grid_search.best_score_:.4f}")
-
 # Training the Random Forest Regressor Model
 rf_model = RandomForestRegressor(max_depth=None, min_samples_split=10, n_estimators=100, random_state=42)
 rf_model.fit(X_train_scaled, y_train)
 
-# Evaluating Model
-# y_rf_pred = rf_model.predict(X_test_scaled)
-# rf_r2 = r2_score(y_test, y_rf_pred)
-# rf_mse = mean_squared_error(y_test, y_rf_pred)
-
-# print(f"Random Forest R-squared: {rf_r2:.4f}")
-# print(f"Random Forest Mean Squared Error: {rf_mse:.2f}")
-
-# Cross-validation and GridSearchCV for hyperparameter tuning
-# rf_model_cv = RandomForestRegressor(random_state=42)
-# scores = cross_val_score(rf_model_cv, X, y, cv=5, scoring='r2')  # 5-fold cross-validation
-# print(f"Cross-validated R-squared: {scores.mean():.4f}")
-
-# Refitting model with best parameters
 
 # Salary Prediction Function
 def predict_salary_rf(model, scaler, stats):
@@ -108,18 +78,22 @@ def predict_salary_rf(model, scaler, stats):
 
 # Get specified player data via User Input and Evaluate performance via contract
 nameInput=input("What NBA player would you like to analyze first?: ")
-name_id = get_player_id(nameInput)
+normalizedName = normalize_text(nameInput)
 
+name_parts = normalizedName.split(' ')
 
-playerData = data[data['PLAYER_ID'] == name_id]
+if len(name_parts) == 2:
+    playerData = data[data['NORMALIZED_NAME'] == normalizedName]
+else:
+    print("Error: The name doesn't contain exactly two parts.")
+    playerData = data[data['NICKNAME'] == normalizedName.capitalize()]
+
 playerName = playerData['PLAYER_NAME'].iloc[0]
 
 
 stats_columns = selected_features[:]
 stats_columns.append('SALARY')
 
-print('selected_features: ',selected_features)
-print('stats_columns: ',stats_columns)
 feature_importances = rf_model.feature_importances_
 
 importance_df = pd.DataFrame({
@@ -129,7 +103,6 @@ importance_df = pd.DataFrame({
 
 importance_df = importance_df.sort_values(by='Importance', ascending=False)
 print(importance_df)
-
 if playerData.empty:
     print("Player not found in the dataset.")
 else:

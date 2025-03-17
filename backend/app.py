@@ -1,94 +1,77 @@
-from flask import Flask, request, render_template
+from flask import Flask, render_template, request, jsonify
 import pandas as pd
+import numpy as np
 import unicodedata
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestRegressor
-from createCharts import interactiveBubblePlot
 from updateDashboard import updateDashboard
 from webscrapeData import updateData
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from createCharts import interactiveBubblePlot, gen_ppg_plot, gen_apg_plot, gen_rpg_plot, gen_fan_plot
 
-from datetime import datetime
+app = Flask(__name__, template_folder='../frontend/templates')
 
-current_datetime = datetime.now()
-month = current_datetime.month
+# Update and preprocess data
+updateData('2024-25')
+gen_ppg_plot()
+gen_apg_plot()
+gen_rpg_plot()
+gen_fan_plot()
 
-if month > 10:
-    currentSeason = current_datetime.year
-else:
-    currentSeason = current_datetime.year - 1
+def normalize_text(text):
+    normalized_text = unicodedata.normalize('NFD', text)
+    normalized_text = ''.join([c for c in normalized_text if not unicodedata.combining(c)])
+    return normalized_text.lower()
 
-startYr = str(currentSeason)
-endYr = str(currentSeason+1)[-2:]
-season_id = startYr + '-' + endYr
-
-
-updateData(season_id)
-app = Flask(__name__,template_folder='../frontend/templates')
-
-# Load and preprocess the data
+# Load dataset
 data = pd.read_csv('../database/merged.csv')
 data.rename(columns={'2024-25': 'SALARY'}, inplace=True)
 data['PLAYER_NAME'] = data['PLAYER_NAME'].astype(str)
-data['PTS'] = data['PTS'] / data['GP']
-data['AST'] = data['AST'] / data['GP']
-data['REB'] = data['REB'] / data['GP']
-data['MIN'] = data['MIN'] / data['GP']
-data['FGA'] = data['FGA'] / data['GP']
-data['FGM'] = data['FGM'] / data['GP']
-data['PLUS_MINUS'] = data['PLUS_MINUS'] / data['GP']
-data['SEASON_ID'] = season_id
-data['NORMALIZED_NAME'] = data['PLAYER_NAME'].apply(lambda x: unicodedata.normalize('NFD', x).encode('ascii', 'ignore').decode('utf-8').lower())
-data['NBA_FANTASY_PTS'] = data['NBA_FANTASY_PTS'] / data['GP']
-data['SALARY'] = pd.to_numeric(data['SALARY'].replace('[\$,]', '', regex=True).str.strip(), errors='coerce')
+for stat in ['PTS', 'AST', 'REB', 'MIN', 'FGA', 'FGM', 'PLUS_MINUS', 'NBA_FANTASY_PTS']:
+    data[stat] = data[stat] / data['GP']
+data['NORMALIZED_NAME'] = data['PLAYER_NAME'].apply(normalize_text)
+data['SALARY'] = pd.to_numeric(data['SALARY'].replace('[\$,]', '', regex=True), errors='coerce')
 data = data.dropna(subset=['SALARY'])
 
-selected_features = ['GP', 'AGE', 'PTS', 'AST', 'REB', 'NBA_FANTASY_PTS', 'MIN', 'PLUS_MINUS', 'FGM','FGA','W_PCT']
+# Define features and train model
+selected_features = ['GP', 'AGE', 'PTS', 'AST', 'REB', 'NBA_FANTASY_PTS', 'MIN', 'PLUS_MINUS', 'FGM', 'FGA', 'W_PCT']
 X = data[selected_features]
 y = data['SALARY']
-
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 rf_model = RandomForestRegressor(max_depth=None, min_samples_split=10, n_estimators=100, random_state=42)
-rf_model.fit(X_scaled, y)
+rf_model.fit(X_train_scaled, y_train)
 
-# Normalize text function
-def normalize_text(text):
-    normalized_text = unicodedata.normalize('NFD', text)
-    return ''.join([c for c in normalized_text if not unicodedata.combining(c)]).lower()
+def predict_salary_rf(model, scaler, stats):
+    stats_scaled = scaler.transform([stats])
+    return model.predict(stats_scaled)[0]
 
 @app.route('/')
-def home():
-    return render_template('index.html')  # Serve the HTML file
+def index():
+    return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    player_name = request.form['playerName']  # Retrieve player name from form
-    print(f"Player name received: {player_name}")
+    player_name = request.form['player_name']
     normalized_name = normalize_text(player_name)
-    
     player_data = data[data['NORMALIZED_NAME'] == normalized_name]
-    playerName = player_data['PLAYER_NAME'].iloc[0]
-    # print('searching name')
-    
     if player_data.empty:
-        return f"Player '{player_name}' not found in the dataset."
-    
+        return jsonify({'error': 'Player not found'})
     player_stats = player_data[selected_features].iloc[0].tolist()
-    player_salary = round(player_data['SALARY'].iloc[0],2)
-    predicted_salary = rf_model.predict(scaler.transform([player_stats]))[0]
-    player_data['PREDICTED_SALARY'] = round(predicted_salary,2)
-    exceeding  = predicted_salary - player_salary > 0
-    interactiveBubblePlot(data, playerName)
-    updateDashboard(player_data)
+    predicted_salary = predict_salary_rf(rf_model, scaler, player_stats)
+    player_data['PREDICTED_SALARY'] = predicted_salary
+    return jsonify({'player': player_name, 'predicted_salary': f"${predicted_salary:,.2f}"})
 
-
-    
-    
-    return (f"The predicted salary for {player_name} is: ${predicted_salary:,.2f}<br>"
-            f"The actual salary is: ${player_salary:,.2f}<br>"
-            f"{'Exceeding' if predicted_salary - player_salary > 1_500_000 else 'Meeting'} expectations!")
-
+@app.route('/dashboard/<player_name>')
+def dashboard(player_name):
+    normalized_name = normalize_text(player_name)
+    player_data = data[data['NORMALIZED_NAME'] == normalized_name]
+    if player_data.empty:
+        return 'Player not found', 404
+    html_content = updateDashboard(player_data)
+    return html_content
 
 if __name__ == '__main__':
     app.run(debug=True)
