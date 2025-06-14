@@ -107,8 +107,10 @@ def updateData(season_id):
     salaryData = salaryData.rename(columns={'player_id': 'PLAYER_NAME'})
 
     merged_df = nba_df_p.merge(salaryData[['PLAYER_NAME', '2024-25']], on="PLAYER_NAME", how="left")
+    merged_df = merged_df.rename(columns={season_id:'SALARY'})
 
     # Save the merged DataFrame to CSV without index
     merged_df.to_excel('../database/merged.xlsx')
     merged_df.to_csv('../database/merged.csv',index=False)
-    print('updated Data in merged')
+    print('updated Data in ../database/merged.csv')
+    print(season_id)
