@@ -59,7 +59,8 @@ data = data.dropna(subset=['SALARY'])
 data['SALARY'] = data['SALARY'].replace('[\$,]', '', regex=True).str.strip()
 data['SALARY'] = pd.to_numeric(data['SALARY'], errors='coerce')
 
-selected_features = ['GP', 'AGE', 'PTS', 'AST', 'REB', 'NBA_FANTASY_PTS', 'MIN', 'PLUS_MINUS', 'FGM','FGA','W_PCT']
+selected_features = ['GP', 'AGE', 'PTS', 'AST', 'REB', 'MIN', 'PLUS_MINUS', 'FGM','FGA','W_PCT']
+selected_features = ['MIN', 'FGM', 'FGA', 'FTM', 'FTA', 'AST','TOV','PFD', 'PTS','NBA_FANTASY_PTS']
 X = data[selected_features]
 y = data['SALARY']
 
