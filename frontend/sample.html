@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlayerGaugeAI – NBA Performance Evaluator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Titillium Web', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-blue-900 text-white pt-20">
+  <!-- Navbar -->
+  <nav class="bg-blue-800 shadow-md fixed top-0 w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="text-2xl font-bold text-orange-400">PlayerGaugeAI</div>
+      <ul class="flex gap-6 text-white font-semibold">
+        <li><a href="#home" class="hover:text-orange-400">Home</a></li>
+        <li><a href="#players" class="hover:text-orange-400">Players</a></li>
+        <li><a href="#teams" class="hover:text-orange-400">Teams</a></li>
+        <li><a href="#analytics" class="hover:text-orange-400">Analytics</a></li>
+        <li><a href="#about" class="hover:text-orange-400">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Home Section -->
+  <section id="home" class="min-h-screen flex flex-col items-center justify-center text-center px-6 bg-gradient-to-br from-blue-900 to-blue-700">
+    <h1 class="text-5xl font-bold mb-4">AI-Powered NBA Player Evaluator</h1>
+    <p class="text-lg text-blue-200 mb-6">Ask our chatbot to evaluate performance, salary fit, and player trends.</p>
+    <div class="w-full max-w-xl bg-white text-black rounded-xl shadow-lg p-6">
+      <h2 class="text-2xl font-semibold mb-4">Ask the AI</h2>
+      <textarea placeholder="What would be the fair salary for Tyrese Maxey's current performance?" class="w-full p-3 border border-gray-300 rounded-md mb-4 resize-none"></textarea>
+      <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">Send</button>
+    </div>
+  </section>
+
+  <!-- Players Section (with Snapshot included) -->
+  <section id="players" class="py-20 bg-blue-800 px-6">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-10">Player Evaluations</h2>
+
+      <!-- Featured Player Snapshot -->
+      <div class="max-w-3xl mx-auto text-center mb-16">
+        <h3 class="text-3xl font-semibold text-orange-400 mb-6">Today's Featured Player</h3>
+        <div class="bg-white text-black rounded-xl shadow-md p-6 text-left">
+          <h4 class="text-2xl font-bold mb-2">Tyrese Maxey</h4>
+          <ul class="text-sm mb-4">
+            <li><strong>Team:</strong> Philadelphia 76ers</li>
+            <li><strong>PPG:</strong> 25.3</li>
+            <li><strong>APG:</strong> 6.2</li>
+            <li><strong>RPG:</strong> 4.1</li>
+            <li><strong>Age:</strong> 23</li>
+          </ul>
+          <p class="text-base font-semibold text-orange-500">Estimated Salary: $29.6M</p>
+          <p class="text-sm text-gray-700 mt-2">Based on recent performance and league trends.</p>
+        </div>
+      </div>
+
+      <!-- Player Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-blue-700 p-6 rounded-xl shadow-md hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold text-orange-400">Efficiency Ratings</h3>
+          <p class="text-sm text-blue-200">Compare predicted salary to actual performance to spot undervalued players.</p>
+        </div>
+        <div class="bg-blue-700 p-6 rounded-xl shadow-md hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold text-orange-400">Clustering Analysis</h3>
+          <p class="text-sm text-blue-200">Group players by playstyle and metrics for role-based comparisons.</p>
+        </div>
+        <div class="bg-blue-700 p-6 rounded-xl shadow-md hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold text-orange-400">Breakout Watch</h3>
+          <p class="text-sm text-blue-200">Identify emerging talent based on year-over-year improvement trends.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Teams Section -->
+  <section id="teams" class="py-20 bg-blue-900 px-6">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-10">Team Insights</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-blue-700 p-6 rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold text-orange-300">Top Team Value</h3>
+          <p class="text-sm text-blue-200">See which teams are getting the most out of their payroll.</p>
+        </div>
+        <div class="bg-blue-700 p-6 rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold text-orange-300">Underperformers</h3>
+          <p class="text-sm text-blue-200">Highlight teams with high spending but low ROI on court.</p>
+        </div>
+        <div class="bg-blue-700 p-6 rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold text-orange-300">Lineup Synergy</h3>
+          <p class="text-sm text-blue-200">Evaluate which player combos yield the best results.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Analytics Section -->
+  <section id="analytics" class="py-20 bg-gradient-to-br from-blue-800 to-blue-600 px-6">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="text-4xl font-bold mb-6">Analytics Dashboard</h2>
+      <p class="text-blue-100 mb-8">Explore player metrics, team dynamics, and salary prediction accuracy.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div class="bg-white text-black p-6 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold mb-2">Model Insights</h3>
+          <p class="text-sm">Understand which features contribute most to predicted salaries using explainable AI.</p>
+        </div>
+        <div class="bg-white text-black p-6 rounded-xl shadow-lg">
+          <h3 class="text-xl font-semibold mb-2">Salary vs. Performance</h3>
+          <p class="text-sm">Visualize how player performance aligns with compensation league-wide.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-blue-950 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-4xl font-bold text-orange-400 mb-4">About PlayerGaugeAI</h2>
+      <p class="text-blue-200 text-lg mb-6">PlayerGaugeAI is an intelligent NBA analytics platform built to bridge the gap between machine learning and everyday fans. With tools for evaluating players and analyzing team dynamics, our mission is to make advanced insights accessible to all.</p>
+      <ul class="text-blue-300 text-left max-w-2xl mx-auto list-disc pl-6">
+        <li>AI-powered chatbot for personalized basketball insights</li>
+        <li>Performance clustering and player comparison tools</li>
+        <li>Visual analytics dashboards and salary evaluation</li>
+        <li>Updated daily with real-world player performance data</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-blue-800 text-center py-6">
+    <p class="text-blue-300">&copy; 2025 PlayerGaugeAI. All rights reserved.</p>
+  </footer>
+</body>
+
+</html>
