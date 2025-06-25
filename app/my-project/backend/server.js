@@ -1,27 +1,3 @@
-// const express = require('express');
-// const cors = require('cors');
-// const bodyParser = require('body-parser');
-// const sqlite3 = require('sqlite3').verbose(); // or pg for PostgreSQL
-// const path = require('path');
-
-// const app = express();
-// const db = new sqlite3.Database('./nba.db'); // or use PG connection
-
-// app.use(cors());
-// app.use(bodyParser.json());
-
-// app.post('/api/query', (req, res) => {
-//   const { query } = req.body;
-//   db.all(query, [], (err, rows) => {
-//     if (err) {
-//       console.error("DB error:", err);
-//       return res.json({ error: err.message });
-//     }
-//     res.json({ results: rows });
-//   });
-// });
-
-// app.listen(5000, () => console.log("Server running on http://localhost:5000"));
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -40,7 +16,12 @@ const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
   }
 });
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
+
 app.use(bodyParser.json());
 
 // ✅ SQL execution endpoint
@@ -68,5 +49,5 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-const PORT = 5000;
+const PORT = 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
