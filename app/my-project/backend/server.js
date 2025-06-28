@@ -49,5 +49,17 @@ app.get('/api/test', (req, res) => {
   });
 });
 
+// Random featured player endpoint
+app.get('/api/featured-player', (req, res) => {
+  const query = `SELECT * FROM player_data ORDER BY RANDOM() LIMIT 1`;
+  db.get(query, [], (err, row) => {
+    if (err) {
+      console.error("❌ Error fetching random player:", err.message);
+      return res.status(500).json({ error: "Failed to fetch random player" });
+    }
+    res.json(row);
+  });
+});
+
 const PORT = 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
