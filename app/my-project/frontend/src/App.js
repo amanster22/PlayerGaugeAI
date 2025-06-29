@@ -12,6 +12,10 @@ function App() {
   const [question, setQuestion] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const [askedQuestion, setAskedQuestion] = useState("");
+  const [lookupName, setLookupName] = useState("");
+  const [lookupResult, setLookupResult] = useState(null);
+  const [lookupError, setLookupError] = useState("");
 
 
   useEffect(() => {
@@ -24,8 +28,10 @@ function App() {
   const handleAskAI = async () => {
     if (!question.trim()) return;
 
+    setAskedQuestion(question);      // Save question for display
+    setQuestion("");                 // Immediately clear input
     setLoading(true);
-    setResponse(""); // optional: clear previous response
+    setResponse("");
 
     try {
       // Step 1: Get SQL query from Mistral
@@ -40,7 +46,7 @@ function App() {
           messages: [
             {
               role: "system",
-              content: "Your job is to review the provided schema for the table named player_data and return the correct SQL query depending on the question. The schema includes the following features: PLAYER_ID, PLAYER_NAME, NICKNAME, TEAM_ID, TEAM_ABBREVIATION, AGE, GP, W, L, W_PCT, MIN, FGM, FGA, FG_PCT, FG3M, FG3A, FG3_PCT, FTM, FTA, FT_PCT, OREB, DREB, REB, AST, TOV, STL, BLK, BLKA, PF, PFD, PTS, PLUS_MINUS, NBA_FANTASY_PTS, DD2, TD3, WNBA_FANTASY_PTS, GP_RANK, W_RANK, L_RANK, W_PCT_RANK, MIN_RANK, FGM_RANK, FGA_RANK, FG_PCT_RANK, FG3M_RANK, FG3A_RANK, FG3_PCT_RANK, FTM_RANK, FTA_RANK, FT_PCT_RANK, OREB_RANK, DREB_RANK, REB_RANK, AST_RANK, TOV_RANK, STL_RANK, BLK_RANK, BLKA_RANK, PF_RANK, PFD_RANK, PTS_RANK, PLUS_MINUS_RANK, NBA_FANTASY_PTS_RANK, DD2_RANK, TD3_RANK, WNBA_FANTASY_PTS_RANK, SALARY, PPG, RPG, APG, PREDICTED_SALARY, SALARY_DIFF, and SALARY_PCT_CHANGE. If a question cannot be answered using only these features from the schema, you must admit that you do not know. Just return the SQL query string, nothing else no need to explain what the query brings, just start with 'SELECT', 'FROM' will always be 'player_data'  and end with ';', Dont add any comments, only the query."
+              content: "Your job is to review the provided schema for the table named player_data and return the correct SQL query depending on the question. The schema includes the following features: PLAYER_ID, PLAYER_NAME, NICKNAME, TEAM_ID, TEAM_ABBREVIATION, AGE, GP, W, L, W_PCT, MIN, FGM, FGA, FG_PCT, FG3M, FG3A, FG3_PCT, FTM, FTA, FT_PCT, OREB, DREB, REB, AST, TOV, STL, BLK, BLKA, PF, PFD, PTS, PLUS_MINUS, NBA_FANTASY_PTS, DD2, TD3, WNBA_FANTASY_PTS, GP_RANK, W_RANK, L_RANK, W_PCT_RANK, MIN_RANK, FGM_RANK, FGA_RANK, FG_PCT_RANK, FG3M_RANK, FG3A_RANK, FG3_PCT_RANK, FTM_RANK, FTA_RANK, FT_PCT_RANK, OREB_RANK, DREB_RANK, REB_RANK, AST_RANK, TOV_RANK, STL_RANK, BLK_RANK, BLKA_RANK, PF_RANK, PFD_RANK, PTS_RANK, PLUS_MINUS_RANK, NBA_FANTASY_PTS_RANK, DD2_RANK, TD3_RANK, WNBA_FANTASY_PTS_RANK, SALARY, PPG, RPG, APG, PREDICTED_SALARY, SALARY_DIFF, and SALARY_PCT_CHANGE. If a question cannot be answered using only these features from the schema, you must admit that you do not know. Just return the SQL query string, nothing else no need to explain what the query brings, just start with 'SELECT', 'FROM' will always be 'player_data'  and end with ';', Also proofread the name, remember these are nba players so ensure the name is correct. Dont add any comments, only the query."
             },
             { role: "user", content: question }
           ]
@@ -66,6 +72,8 @@ function App() {
         },
         body: JSON.stringify({ query: sqlQuery })
       });
+
+      
 
       const dbData = await dbRes.json();
 
@@ -106,6 +114,31 @@ function App() {
       setLoading(false)
     }
   };
+
+  const handleLookup = async () => {
+    if (!lookupName.trim()) return;
+
+    try {
+      const res = await fetch(`http://localhost:5001/api/player-lookup?name=${encodeURIComponent(lookupName.trim())}`);
+      const data = await res.json();
+
+      if (data.error || !data.player) {
+        setLookupResult(null);
+        setLookupError("Player not found.");
+      } else {
+        setLookupResult(data.player);
+        setLookupError("");
+      }
+      console.log("Lookup result:", data);
+    } catch (error) {
+      console.error("Error looking up player:", error);
+      setLookupError("Failed to fetch player data.");
+      setLookupResult(null);
+    }
+    
+
+  };
+
 
 
   return (
@@ -188,12 +221,15 @@ function App() {
             />
           </form>
 
-          {response && (
+          {askedQuestion && response && (
             <div className="mt-4 text-left">
+              <h3 className="text-lg font-semibold mb-1">You asked:</h3>
+              <p className="text-sm text-gray-900 italic mb-2 whitespace-pre-wrap">"{askedQuestion}"</p>
               <h3 className="text-lg font-semibold">AI Response:</h3>
               <p className="text-sm text-gray-800 mt-1 whitespace-pre-wrap">{response}</p>
             </div>
           )}
+
         </div>
       </section>
 
@@ -205,37 +241,109 @@ function App() {
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h3 className="text-3xl font-semibold text-orange-400 mb-6">Today's Featured Player</h3>
             {featuredPlayer ? (
-              <div className="bg-white text-black rounded-xl shadow-md p-6 text-left">
-                <h4 className="text-2xl font-bold mb-2">{featuredPlayer.PLAYER_NAME}</h4>
-                <ul className="text-sm mb-4">
-                  <li><strong>Team:</strong> {featuredPlayer.TEAM_ABBREVIATION}</li>
-                  <li><strong>PPG:</strong> {featuredPlayer.PPG}</li>
-                  <li><strong>APG:</strong> {featuredPlayer.APG}</li>
-                  <li><strong>RPG:</strong> {featuredPlayer.RPG}</li>
-                  <li><strong>Age:</strong> {featuredPlayer.AGE}</li>
-                </ul>
-                {/* <p className="text-base font-semibold text-orange-500">Estimated Salary: ${featuredPlayer.PREDICTED_SALARY}M</p> */}
-                <p className="text-base font-semibold text-orange-500">
-                  Estimated Salary: ${featuredPlayer.PREDICTED_SALARY}M
-                </p>
-                {featuredPlayer.SALARY_PCT_CHANGE != null && (() => {
-                  const { colorClass, arrow } = getSalaryChangeTailwind(featuredPlayer.SALARY_PCT_CHANGE);
-                  return (
-                    <p className={`text-sm mt-2 font-medium ${colorClass}`}>
-                      Salary Change: {featuredPlayer.SALARY_PCT_CHANGE.toFixed(2)}% {arrow}
-                    </p>
-                  );
-                })()}
+              <div className="bg-white text-black rounded-xl shadow-md p-6 text-left overflow-x-auto">
+                <h4 className="text-2xl font-bold mb-4">{featuredPlayer.PLAYER_NAME}</h4>
 
+                <table className="w-full text-sm border border-gray-300">
+                  <tbody>
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">Team</th>
+                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.TEAM_ABBREVIATION}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Age</th>
+                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.AGE}</td>
+                    </tr>
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">PPG</th>
+                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.PPG}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">APG</th>
+                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.APG}</td>
+                    </tr>
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">RPG</th>
+                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.RPG}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
+                      <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
+                        ${featuredPlayer.PREDICTED_SALARY}M
+                      </td>
+                    </tr>
 
+                    
+                  </tbody>
+                </table>
 
-                <p className="text-sm text-gray-700 mt-2">Based on recent performance and league trends.</p>
+                <p className="text-sm text-gray-700 mt-4">Based on recent performance and league trends.</p>
               </div>
+
             ) : (
               <p className="text-blue-200">Loading player data...</p>
             )}
           </div>
         </div>
+
+        <div className="max-w-3xl mx-auto text-center mt-12">
+          <h3 className="text-2xl font-semibold text-orange-300 mb-4">Look Up a Player</h3>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+            <input
+              type="text"
+              value={lookupName}
+              onChange={(e) => setLookupName(e.target.value)}
+              placeholder="Enter player name"
+              className="p-3 border border-gray-300 rounded-md w-full sm:w-80 text-black"
+            />
+            <button
+              onClick={handleLookup}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-3 rounded"
+            >
+              Search
+            </button>
+          </div>
+
+          {lookupError && <p className="text-red-400">{lookupError}</p>}
+
+          {lookupResult && (
+            <div className="mt-6 bg-white text-black rounded-xl shadow-md p-6 text-left overflow-x-auto">
+              <h4 className="text-xl font-bold mb-4">{lookupResult.PLAYER_NAME}</h4>
+              <table className="w-full text-sm border border-gray-300">
+                <tbody>
+                  <tr className="bg-gray-100">
+                    <th className="text-left px-4 py-2 border border-gray-300">Team</th>
+                    <td className="px-4 py-2 border border-gray-300">{lookupResult.TEAM_ABBREVIATION}</td>
+                  </tr>
+                  <tr>
+                    <th className="text-left px-4 py-2 border border-gray-300">Age</th>
+                    <td className="px-4 py-2 border border-gray-300">{lookupResult.AGE}</td>
+                  </tr>
+                  <tr className="bg-gray-100">
+                    <th className="text-left px-4 py-2 border border-gray-300">PPG</th>
+                    <td className="px-4 py-2 border border-gray-300">{lookupResult.PPG}</td>
+                  </tr>
+                  <tr>
+                    <th className="text-left px-4 py-2 border border-gray-300">APG</th>
+                    <td className="px-4 py-2 border border-gray-300">{lookupResult.APG}</td>
+                  </tr>
+                  <tr className="bg-gray-100">
+                    <th className="text-left px-4 py-2 border border-gray-300">RPG</th>
+                    <td className="px-4 py-2 border border-gray-300">{lookupResult.RPG}</td>
+                  </tr>
+                  <tr>
+                    <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
+                    <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
+                      ${lookupResult.PREDICTED_SALARY}M
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+
       </section>
 
       {/* Teams Section */}

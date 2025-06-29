@@ -16,6 +16,15 @@ const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
   }
 });
 
+const dbGet = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+};
+
 app.use(cors({
   origin: 'http://localhost:3000',
   methods: ['GET', 'POST'],
@@ -60,6 +69,47 @@ app.get('/api/featured-player', (req, res) => {
     res.json(row);
   });
 });
+
+app.get("/api/player-lookup", async (req, res) => {
+  const name = req.query.name?.toLowerCase();
+  if (!name) return res.status(400).json({ error: "Missing player name" });
+
+  try {
+    const query = `
+      SELECT PLAYER_NAME, TEAM_ABBREVIATION, AGE, PPG, APG, RPG, PREDICTED_SALARY, SALARY_PCT_CHANGE
+      FROM player_data
+      WHERE LOWER(PLAYER_NAME) LIKE ?
+      LIMIT 1;
+    `;
+
+    const player = await dbGet(query, [`%${name}%`]);
+
+    if (!player) return res.status(404).json({ error: "Player not found." });
+
+    // 🔍 Add performance label based on SALARY_PCT_CHANGE
+    const change = player.SALARY_PCT_CHANGE;
+
+    if (change == null) {
+      player.performance = "error";
+    } else if (change > 5) {
+      player.performance = "up";
+    } else if (change < -5) {
+      player.performance = "down";
+    } else {
+      player.performance = "middle";
+    }
+
+    res.json({ player });
+
+  } catch (err) {
+    console.error("❌ DB error:", err.message);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+
+
+
 
 const PORT = 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
