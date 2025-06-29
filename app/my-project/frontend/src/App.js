@@ -17,6 +17,20 @@ function App() {
   const [lookupResult, setLookupResult] = useState(null);
   const [lookupError, setLookupError] = useState("");
 
+  const [teams] = useState([
+    'ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW',
+    'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK',
+    'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS'
+  ]);
+
+  const [expandedTeam, setExpandedTeam] = useState(null);
+  const [teamPlayers, setTeamPlayers] = useState([]);
+  const [loadingTeam, setLoadingTeam] = useState(false);
+  const [teamSalary, setTeamSalary] = useState(null);
+
+
+
+
 
   useEffect(() => {
     fetch('http://localhost:5001/api/featured-player')
@@ -73,7 +87,7 @@ function App() {
         body: JSON.stringify({ query: sqlQuery })
       });
 
-      
+
 
       const dbData = await dbRes.json();
 
@@ -115,6 +129,24 @@ function App() {
     }
   };
 
+  const handleTeamClick = async (team) => {
+    setExpandedTeam(team);
+    setLoadingTeam(true);
+    try {
+      const res = await fetch(`http://localhost:5001/api/team-players?team=${team}`);
+      const data = await res.json();
+      setTeamPlayers(data.players);
+      setTeamSalary(data.teamSalary); // 👈 grab the salary
+    } catch (err) {
+      console.error("Error fetching team players:", err);
+    } finally {
+      setLoadingTeam(false);
+    }
+  };
+  
+
+
+
   const handleLookup = async () => {
     if (!lookupName.trim()) return;
 
@@ -135,7 +167,7 @@ function App() {
       setLookupError("Failed to fetch player data.");
       setLookupResult(null);
     }
-    
+
 
   };
 
@@ -273,7 +305,7 @@ function App() {
                       </td>
                     </tr>
 
-                    
+
                   </tbody>
                 </table>
 
@@ -347,12 +379,78 @@ function App() {
       </section>
 
       {/* Teams Section */}
+      {/* Teams Section */}
+      {/* Teams Section */}
       <section id="teams" className="py-20 bg-blue-900 px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-10">Team Insights</h2>
-          {/* Cards omitted for brevity */}
+
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 justify-items-center">
+            {teams.map((team) => (
+              <button
+                key={team}
+                onClick={() => handleTeamClick(team)}
+                className={`bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded transition duration-200 ${expandedTeam === team ? 'ring-4 ring-yellow-400' : ''}`}
+              >
+                {team}
+              </button>
+            ))}
+          </div>
+
+          {expandedTeam && (
+            <div className="mt-10">
+              <h3 className="text-2xl font-semibold text-orange-300 mb-4 text-center">
+                Players on {expandedTeam}
+              </h3>
+
+              {loadingTeam ? (
+                <p className="text-center text-blue-200">Loading players...</p>
+              ) : teamPlayers.length === 0 ? (
+                <p className="text-center text-red-300">No players found.</p>
+              ) : (
+                <>
+                  {teamSalary !== null && (
+                    <p className="text-center text-green-300 font-semibold text-lg mb-4">
+                      Estimated Team Salary (Top 13): ${teamSalary.toLocaleString()}M
+                    </p>
+                  )}
+
+                  <div className="overflow-x-auto whitespace-nowrap px-2 py-4">
+                    <div className="flex gap-4">
+                      {teamPlayers.map((player) => {
+                        let salaryChangeColor = "text-yellow-500";
+                        if (player.SALARY_PCT_CHANGE > 5) salaryChangeColor = "text-green-600";
+                        else if (player.SALARY_PCT_CHANGE < -5) salaryChangeColor = "text-red-600";
+
+                        return (
+                          <div
+                            key={player.PLAYER_NAME}
+                            className="min-w-[200px] bg-white text-black p-4 rounded-lg shadow-md"
+                          >
+                            <h4 className="font-bold text-lg mb-2">{player.PLAYER_NAME}</h4>
+                            <p className="text-sm">PPG: {player.PPG}</p>
+                            <p className="text-sm">APG: {player.APG}</p>
+                            <p className="text-sm">RPG: {player.RPG}</p>
+                            <p className="mt-2 font-semibold text-orange-600">
+                              Est. Salary: ${player.FORMATTED_SALARY}M
+                            </p>
+                            <p className="mt-2 font-semibold">
+                              Salary Change: <span className={salaryChangeColor}>${player.SALARY_PCT_CHANGE}</span>
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </section>
+
+
+
 
       {/* Analytics Section */}
       <section id="analytics" className="py-20 bg-gradient-to-br from-blue-800 to-blue-600 px-6">

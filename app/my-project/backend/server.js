@@ -107,6 +107,49 @@ app.get("/api/player-lookup", async (req, res) => {
   }
 });
 
+app.get('/api/team-players', async (req, res) => {
+  const team = req.query.team?.toUpperCase();
+  if (!team) return res.status(400).json({ error: "Missing team abbreviation" });
+
+  const query = `
+    SELECT 
+      PLAYER_NAME, 
+      PPG, 
+      APG, 
+      RPG, 
+      printf('%,.2f', PREDICTED_SALARY / 1000000.0) AS FORMATTED_SALARY,
+      ROUND(SALARY_PCT_CHANGE, 2) AS SALARY_PCT_CHANGE,
+      PREDICTED_SALARY
+    FROM player_data
+    WHERE TEAM_ABBREVIATION = ?
+    ORDER BY PREDICTED_SALARY DESC
+    LIMIT 13;
+  `;
+
+  try {
+    const players = await new Promise((resolve, reject) => {
+      db.all(query, [team], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+
+    // Calculate team salary sum (in millions, rounded to 2 decimals)
+    const teamSalaryMil = players.reduce((sum, player) => {
+      return sum + (player.PREDICTED_SALARY || 0);
+    }, 0) / 1_000_000;
+
+    const roundedTeamSalary = parseFloat(teamSalaryMil.toFixed(2));
+
+    res.json({ players, teamSalary: roundedTeamSalary });
+
+  } catch (err) {
+    console.error("❌ DB error:", err.message);
+    res.status(500).json({ error: "Failed to fetch team players" });
+  }
+});
+
+
 
 
 
