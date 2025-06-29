@@ -60,7 +60,7 @@ app.get('/api/test', (req, res) => {
 
 // Random featured player endpoint
 app.get('/api/featured-player', (req, res) => {
-  const query = `SELECT * FROM player_data ORDER BY RANDOM() LIMIT 1`;
+  const query = `SELECT PLAYER_NAME, TEAM_ABBREVIATION, AGE, PPG, APG, RPG, printf('%,.2f', PREDICTED_SALARY / 1000000.0) AS FORMATTED_SALARY, SALARY_PCT_CHANGE FROM player_data ORDER BY RANDOM() LIMIT 1`;
   db.get(query, [], (err, row) => {
     if (err) {
       console.error("❌ Error fetching random player:", err.message);
@@ -76,7 +76,7 @@ app.get("/api/player-lookup", async (req, res) => {
 
   try {
     const query = `
-      SELECT PLAYER_NAME, TEAM_ABBREVIATION, AGE, PPG, APG, RPG, PREDICTED_SALARY, SALARY_PCT_CHANGE
+      SELECT PLAYER_NAME, TEAM_ABBREVIATION, AGE, PPG, APG, RPG, printf('%,.2f', PREDICTED_SALARY / 1000000.0) AS FORMATTED_SALARY, SALARY_PCT_CHANGE
       FROM player_data
       WHERE LOWER(PLAYER_NAME) LIKE ?
       LIMIT 1;

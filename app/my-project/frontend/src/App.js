@@ -301,7 +301,7 @@ function App() {
                     <tr>
                       <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
                       <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
-                        ${featuredPlayer.PREDICTED_SALARY}M
+                        ${featuredPlayer.FORMATTED_SALARY}M
                       </td>
                     </tr>
 
@@ -366,7 +366,7 @@ function App() {
                   <tr>
                     <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
                     <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
-                      ${lookupResult.PREDICTED_SALARY}M
+                      ${lookupResult.FORMATTED_SALARY}M
                     </td>
                   </tr>
                 </tbody>
@@ -435,7 +435,7 @@ function App() {
                               Est. Salary: ${player.FORMATTED_SALARY}M
                             </p>
                             <p className="mt-2 font-semibold">
-                              Salary Change: <span className={salaryChangeColor}>${player.SALARY_PCT_CHANGE}</span>
+                              Salary Change: <span className={salaryChangeColor}>{player.SALARY_PCT_CHANGE}%</span>
                             </p>
                           </div>
                         );
