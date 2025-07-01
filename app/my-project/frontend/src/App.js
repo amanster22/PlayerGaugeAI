@@ -304,10 +304,22 @@ function App() {
                         ${featuredPlayer.FORMATTED_SALARY}M
                       </td>
                     </tr>
-
-
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">Predicted Salary</th>
+                      <td className="px-4 py-2 border border-gray-300 text-green-600 font-semibold">
+                        ${featuredPlayer.FORMATTED_PREDICTED_SALARY}M
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Salary Difference</th>
+                      <td className="px-4 py-2 border border-gray-300 font-bold">
+                        ${(featuredPlayer.FORMATTED_PREDICTED_SALARY - featuredPlayer.FORMATTED_SALARY).toFixed(1)}M
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
+
+
 
                 <p className="text-sm text-gray-700 mt-4">Based on recent performance and league trends.</p>
               </div>
@@ -369,8 +381,21 @@ function App() {
                       ${lookupResult.FORMATTED_SALARY}M
                     </td>
                   </tr>
+                  <tr className="bg-gray-100">
+                    <th className="text-left px-4 py-2 border border-gray-300">Predicted Salary</th>
+                    <td className="px-4 py-2 border border-gray-300 text-green-600 font-semibold">
+                      ${lookupResult.FORMATTED_PREDICTED_SALARY}M
+                    </td>
+                  </tr>
+                  <tr>
+                    <th className="text-left px-4 py-2 border border-gray-300">Salary Difference</th>
+                    <td className="px-4 py-2 border border-gray-300 font-bold">
+                      ${(featuredPlayer.FORMATTED_PREDICTED_SALARY - featuredPlayer.FORMATTED_SALARY).toFixed(1)}M
+                    </td>
+                  </tr>
                 </tbody>
               </table>
+
             </div>
           )}
         </div>

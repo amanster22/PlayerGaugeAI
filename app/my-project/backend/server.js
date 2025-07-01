@@ -8,20 +8,27 @@ const app = express();
 
 // ✅ Use absolute path to avoid "no such table" errors
 // const dbPath = path.resolve(__dirname, 'nba_data.db');
-const dbPath = path.resolve(__dirname, 'nba_dataV2.db');
+// const dbPath = path.resolve(__dirname, 'nba_dataV2.db');
+const dbPath = path.resolve(__dirname, 'nba_dataV3.db');
+
 const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
   if (err) {
     console.error('❌ Failed to connect to database:', err.message);
   } else {
-    console.log('✅ Connected to nba_data.db');
+    console.log('✅ Connected to nba_dataV3.db');
   }
 });
 
 const dbGet = (sql, params = []) => {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
+      if (err) {
+        console.error("❌ dbGet error:", err);
+        reject(err);
+      } else {
+        console.log("dbGet result row:", row);
+        resolve(row);
+      }
     });
   });
 };
@@ -60,53 +67,74 @@ app.get('/api/test', (req, res) => {
 });
 
 // Random featured player endpoint
-app.get('/api/featured-player', (req, res) => {
-  const query = `SELECT PLAYER_NAME, TEAM_ABBREVIATION, AGE, PPG, APG, RPG, printf('%,.2f', PREDICTED_SALARY) AS FORMATTED_SALARY, SALARY_PCT_CHANGE FROM player_data ORDER BY RANDOM() LIMIT 1`;
-  db.get(query, [], (err, row) => {
-    if (err) {
-      console.error("❌ Error fetching random player:", err.message);
-      return res.status(500).json({ error: "Failed to fetch random player" });
-    }
-    res.json(row);
-  });
-});
+// app.get('/api/featured-player', (req, res) => {
+//   const query = `SELECT PLAYER_NAME, TEAM_ABBREVIATION, AGE, PPG, APG, RPG, printf('%,.2f', PREDICTED_SALARY) AS FORMATTED_SALARY, SALARY_PCT_CHANGE FROM player_data ORDER BY RANDOM() LIMIT 1`;
+//   db.get(query, [], (err, row) => {
+//     if (err) {
+//       console.error("❌ Error fetching random player:", err.message);
+//       return res.status(500).json({ error: "Failed to fetch random player" });
+//     }
+//     res.json(row);
+//   });
+// });
 
-app.get("/api/player-lookup", async (req, res) => {
-  const name = req.query.name?.toLowerCase();
-  if (!name) return res.status(400).json({ error: "Missing player name" });
-
+app.get("/api/featured-player", async (req, res) => {
   try {
     const query = `
-      SELECT PLAYER_NAME, TEAM_ABBREVIATION, AGE, PPG, APG, RPG, printf('%,.2f', PREDICTED_SALARY) AS FORMATTED_SALARY, SALARY_PCT_CHANGE
+      SELECT *, 
+             SALARY_CONDENSED AS FORMATTED_SALARY,
+             PREDICTED_SALARY AS FORMATTED_PREDICTED_SALARY
       FROM player_data
-      WHERE LOWER(PLAYER_NAME) LIKE ?
+      ORDER BY RANDOM()
       LIMIT 1;
     `;
 
-    const player = await dbGet(query, [`%${name}%`]);
-
-    if (!player) return res.status(404).json({ error: "Player not found." });
-
-    // 🔍 Add performance label based on SALARY_PCT_CHANGE
-    const change = player.SALARY_PCT_CHANGE;
-
-    if (change == null) {
-      player.performance = "error";
-    } else if (change > 5) {
-      player.performance = "up";
-    } else if (change < -5) {
-      player.performance = "down";
-    } else {
-      player.performance = "middle";
-    }
-
-    res.json({ player });
-
+    const row = await dbGet(query);  // <-- Use dbGet here
+    res.json(row);
   } catch (err) {
-    console.error("❌ DB error:", err.message);
+    console.error("Error fetching featured player:", err);
     res.status(500).json({ error: "Database error" });
   }
 });
+
+
+app.get("/api/player-lookup", async (req, res) => {
+  const name = req.query.name?.trim();
+  console.log(`🔍 Player lookup requested for name: "${name}"`);
+
+  if (!name) {
+    console.log("❌ Missing name parameter in request");
+    return res.json({ error: "Missing name" });
+  }
+
+  try {
+    const query = `
+      SELECT *,
+             SALARY_CONDENSED AS FORMATTED_SALARY,
+             PREDICTED_SALARY AS FORMATTED_PREDICTED_SALARY,
+             ROUND(SALARY_PCT_CHANGE, 2) AS SALARY_PCT_CHANGE
+      FROM player_data
+      WHERE LOWER(PLAYER_NAME) LIKE LOWER(?)
+      LIMIT 1;
+    `;
+
+    const row = await dbGet(query, [`%${name}%`]);  // <-- Use dbGet here
+
+    if (!row) {
+      console.log(`⚠️ No player found matching: "${name}"`);
+      return res.json({ error: "Player not found" });
+    }
+
+    console.log("✅ Player found:", row);
+    res.json({ player: row });
+
+  } catch (err) {
+    console.error("❌ Lookup error:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+
 
 app.get('/api/team-players', async (req, res) => {
   const team = req.query.team?.toUpperCase();
@@ -114,17 +142,18 @@ app.get('/api/team-players', async (req, res) => {
 
   const query = `
     SELECT 
-      PLAYER_NAME, 
-      PPG, 
-      APG, 
-      RPG, 
-      printf('%,.2f', PREDICTED_SALARY) AS FORMATTED_SALARY,
-      ROUND(SALARY_PCT_CHANGE, 2) AS SALARY_PCT_CHANGE,
-      PREDICTED_SALARY
-    FROM player_data
-    WHERE TEAM_ABBREVIATION = ?
-    ORDER BY PREDICTED_SALARY DESC
-    LIMIT 13;
+  PLAYER_NAME, 
+  PPG, 
+  APG, 
+  RPG, 
+  SALARY_CONDENSED AS FORMATTED_SALARY,
+  ROUND(SALARY_PCT_CHANGE, 2) AS SALARY_PCT_CHANGE,
+  PREDICTED_SALARY
+FROM player_data
+WHERE TEAM_ABBREVIATION = ?
+ORDER BY PREDICTED_SALARY DESC
+LIMIT 13;
+
   `;
 
   try {
@@ -138,7 +167,7 @@ app.get('/api/team-players', async (req, res) => {
     // Calculate team salary sum (in millions, rounded to 2 decimals)
     const teamSalaryMil = players.reduce((sum, player) => {
       return sum + (player.PREDICTED_SALARY || 0);
-    }, 0) ;
+    }, 0);
 
     const roundedTeamSalary = parseFloat(teamSalaryMil.toFixed(2));
 
