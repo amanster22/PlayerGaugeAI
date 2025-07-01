@@ -289,38 +289,91 @@ function App() {
 
                   <table className="w-full text-sm border border-gray-300">
                     <tbody>
-                      <tr className="bg-gray-100">
+
+                      <tr>
                         <th className="text-left px-4 py-2 border border-gray-300">Team</th>
                         <td className="px-4 py-2 border border-gray-300">{featuredPlayer.TEAM_ABBREVIATION}</td>
                       </tr>
+
+                      <tr className="bg-gray-100">
+                        <th className="text-left px-4 py-2 border border-gray-300">Position</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.POSITION}</td>
+                      </tr>
+
                       <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">Jersey Number</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.JERSEY_NUMBER}</td>
+                      </tr>
+
+                      <tr className="bg-gray-100">
+                        <th className="text-left px-4 py-2 border border-gray-300">Height</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.HEIGHT}</td>
+                      </tr>
+
+                      <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">Weight</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.WEIGHT}</td>
+                      </tr>
+
+                      <tr className="bg-gray-100">
                         <th className="text-left px-4 py-2 border border-gray-300">Age</th>
                         <td className="px-4 py-2 border border-gray-300">{featuredPlayer.AGE}</td>
                       </tr>
+
+                      <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">Country</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.COUNTRY}</td>
+                      </tr>
+
+                      <tr className="bg-gray-100">
+                        <th className="text-left px-4 py-2 border border-gray-300">College</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.COLLEGE}</td>
+                      </tr>
+
+                      <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">Draft Year</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.DRAFT_YEAR}</td>
+                      </tr>
+
+                      <tr className="bg-gray-100">
+                        <th className="text-left px-4 py-2 border border-gray-300">Draft Round</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.DRAFT_ROUND}</td>
+                      </tr>
+
+                      <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">Draft Number</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.DRAFT_NUMBER}</td>
+                      </tr>
+
                       <tr className="bg-gray-100">
                         <th className="text-left px-4 py-2 border border-gray-300">PPG</th>
                         <td className="px-4 py-2 border border-gray-300">{featuredPlayer.PPG}</td>
                       </tr>
+
                       <tr>
                         <th className="text-left px-4 py-2 border border-gray-300">APG</th>
                         <td className="px-4 py-2 border border-gray-300">{featuredPlayer.APG}</td>
                       </tr>
+
                       <tr className="bg-gray-100">
                         <th className="text-left px-4 py-2 border border-gray-300">RPG</th>
                         <td className="px-4 py-2 border border-gray-300">{featuredPlayer.RPG}</td>
                       </tr>
+
                       <tr>
-                        <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
+                        <th className="text-left px-4 py-2 border border-gray-300">Official Salary</th>
                         <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
                           ${featuredPlayer.FORMATTED_SALARY}M
                         </td>
                       </tr>
+
                       <tr className="bg-gray-100">
-                        <th className="text-left px-4 py-2 border border-gray-300">Predicted Salary</th>
+                        <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
                         <td className="px-4 py-2 border border-gray-300 text-green-600 font-semibold">
                           ${featuredPlayer.FORMATTED_PREDICTED_SALARY}M
                         </td>
                       </tr>
+
                       <tr>
                         <th className="text-left px-4 py-2 border border-gray-300">Salary Change</th>
                         <td className={`px-4 py-2 border border-gray-300 font-bold ${salaryDiffColor}`}>
@@ -372,38 +425,91 @@ function App() {
                 <h4 className="text-xl font-bold mb-4">{lookupResult.PLAYER_NAME}</h4>
                 <table className="w-full text-sm border border-gray-300">
                   <tbody>
-                    <tr className="bg-gray-100">
+
+                    <tr>
                       <th className="text-left px-4 py-2 border border-gray-300">Team</th>
                       <td className="px-4 py-2 border border-gray-300">{lookupResult.TEAM_ABBREVIATION}</td>
                     </tr>
+
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">Position</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.POSITION}</td>
+                    </tr>
+
                     <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Jersey Number</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.JERSEY_NUMBER}</td>
+                    </tr>
+
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">Height</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.HEIGHT}</td>
+                    </tr>
+
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Weight</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.WEIGHT}</td>
+                    </tr>
+
+                    <tr className="bg-gray-100">
                       <th className="text-left px-4 py-2 border border-gray-300">Age</th>
                       <td className="px-4 py-2 border border-gray-300">{lookupResult.AGE}</td>
                     </tr>
+
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Country</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.COUNTRY}</td>
+                    </tr>
+
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">College</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.COLLEGE}</td>
+                    </tr>
+
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Draft Year</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.DRAFT_YEAR}</td>
+                    </tr>
+
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">Draft Round</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.DRAFT_ROUND}</td>
+                    </tr>
+
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Draft Number</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.DRAFT_NUMBER}</td>
+                    </tr>
+
                     <tr className="bg-gray-100">
                       <th className="text-left px-4 py-2 border border-gray-300">PPG</th>
                       <td className="px-4 py-2 border border-gray-300">{lookupResult.PPG}</td>
                     </tr>
+
                     <tr>
                       <th className="text-left px-4 py-2 border border-gray-300">APG</th>
                       <td className="px-4 py-2 border border-gray-300">{lookupResult.APG}</td>
                     </tr>
+
                     <tr className="bg-gray-100">
                       <th className="text-left px-4 py-2 border border-gray-300">RPG</th>
                       <td className="px-4 py-2 border border-gray-300">{lookupResult.RPG}</td>
                     </tr>
+
                     <tr>
                       <th className="text-left px-4 py-2 border border-gray-300">Official Salary</th>
                       <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
                         ${lookupResult.FORMATTED_SALARY}M
                       </td>
                     </tr>
+
                     <tr className="bg-gray-100">
                       <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
                       <td className="px-4 py-2 border border-gray-300 text-green-600 font-semibold">
                         ${lookupResult.FORMATTED_PREDICTED_SALARY}M
                       </td>
                     </tr>
+
                     <tr>
                       <th className="text-left px-4 py-2 border border-gray-300">Salary Change</th>
                       <td className={`px-4 py-2 border border-gray-300 font-bold ${salaryDiffColor}`}>
@@ -411,6 +517,7 @@ function App() {
                       </td>
                     </tr>
                   </tbody>
+
                 </table>
               </div>
             );
