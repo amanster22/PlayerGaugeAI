@@ -66,24 +66,13 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// Random featured player endpoint
-// app.get('/api/featured-player', (req, res) => {
-//   const query = `SELECT PLAYER_NAME, TEAM_ABBREVIATION, AGE, PPG, APG, RPG, printf('%,.2f', PREDICTED_SALARY) AS FORMATTED_SALARY, SALARY_PCT_CHANGE FROM player_data ORDER BY RANDOM() LIMIT 1`;
-//   db.get(query, [], (err, row) => {
-//     if (err) {
-//       console.error("❌ Error fetching random player:", err.message);
-//       return res.status(500).json({ error: "Failed to fetch random player" });
-//     }
-//     res.json(row);
-//   });
-// });
 
 app.get("/api/featured-player", async (req, res) => {
   try {
     const query = `
       SELECT *, 
              SALARY_CONDENSED AS FORMATTED_SALARY,
-             PREDICTED_SALARY AS FORMATTED_PREDICTED_SALARY
+             ROUND(PREDICTED_SALARY, 2) AS FORMATTED_PREDICTED_SALARY
       FROM player_data
       ORDER BY RANDOM()
       LIMIT 1;
@@ -111,7 +100,7 @@ app.get("/api/player-lookup", async (req, res) => {
     const query = `
       SELECT *,
              SALARY_CONDENSED AS FORMATTED_SALARY,
-             PREDICTED_SALARY AS FORMATTED_PREDICTED_SALARY,
+             ROUND(PREDICTED_SALARY, 2) AS FORMATTED_PREDICTED_SALARY,
              ROUND(SALARY_PCT_CHANGE, 2) AS SALARY_PCT_CHANGE
       FROM player_data
       WHERE LOWER(PLAYER_NAME) LIKE LOWER(?)

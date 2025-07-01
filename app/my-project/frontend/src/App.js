@@ -272,61 +272,69 @@ function App() {
           <h2 className="text-4xl font-bold text-center mb-10">Player Evaluations</h2>
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h3 className="text-3xl font-semibold text-orange-400 mb-6">Today's Featured Player</h3>
-            {featuredPlayer ? (
-              <div className="bg-white text-black rounded-xl shadow-md p-6 text-left overflow-x-auto">
-                <h4 className="text-2xl font-bold mb-4">{featuredPlayer.PLAYER_NAME}</h4>
+            {featuredPlayer && (() => {
+              const change = featuredPlayer.SALARY_PCT_CHANGE;
+              let salaryDiffColor = "text-yellow-500"; // default color for small change
 
-                <table className="w-full text-sm border border-gray-300">
-                  <tbody>
-                    <tr className="bg-gray-100">
-                      <th className="text-left px-4 py-2 border border-gray-300">Team</th>
-                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.TEAM_ABBREVIATION}</td>
-                    </tr>
-                    <tr>
-                      <th className="text-left px-4 py-2 border border-gray-300">Age</th>
-                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.AGE}</td>
-                    </tr>
-                    <tr className="bg-gray-100">
-                      <th className="text-left px-4 py-2 border border-gray-300">PPG</th>
-                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.PPG}</td>
-                    </tr>
-                    <tr>
-                      <th className="text-left px-4 py-2 border border-gray-300">APG</th>
-                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.APG}</td>
-                    </tr>
-                    <tr className="bg-gray-100">
-                      <th className="text-left px-4 py-2 border border-gray-300">RPG</th>
-                      <td className="px-4 py-2 border border-gray-300">{featuredPlayer.RPG}</td>
-                    </tr>
-                    <tr>
-                      <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
-                      <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
-                        ${featuredPlayer.FORMATTED_SALARY}M
-                      </td>
-                    </tr>
-                    <tr className="bg-gray-100">
-                      <th className="text-left px-4 py-2 border border-gray-300">Predicted Salary</th>
-                      <td className="px-4 py-2 border border-gray-300 text-green-600 font-semibold">
-                        ${featuredPlayer.FORMATTED_PREDICTED_SALARY}M
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="text-left px-4 py-2 border border-gray-300">Salary Difference</th>
-                      <td className="px-4 py-2 border border-gray-300 font-bold">
-                        ${(featuredPlayer.FORMATTED_PREDICTED_SALARY - featuredPlayer.FORMATTED_SALARY).toFixed(1)}M
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              if (change > 5) salaryDiffColor = "text-green-600";   // positive change > 5%
+              else if (change < -5) salaryDiffColor = "text-red-600"; // negative change < -5%
 
+              const roundedSalaryChange = (
+                ((featuredPlayer.FORMATTED_PREDICTED_SALARY - featuredPlayer.FORMATTED_SALARY) * 100) / featuredPlayer.FORMATTED_SALARY
+              ).toFixed(2);
 
+              return (
+                <div className="bg-white text-black rounded-xl shadow-md p-6 text-left overflow-x-auto">
+                  <h4 className="text-2xl font-bold mb-4">{featuredPlayer.PLAYER_NAME}</h4>
 
-                <p className="text-sm text-gray-700 mt-4">Based on recent performance and league trends.</p>
-              </div>
+                  <table className="w-full text-sm border border-gray-300">
+                    <tbody>
+                      <tr className="bg-gray-100">
+                        <th className="text-left px-4 py-2 border border-gray-300">Team</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.TEAM_ABBREVIATION}</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">Age</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.AGE}</td>
+                      </tr>
+                      <tr className="bg-gray-100">
+                        <th className="text-left px-4 py-2 border border-gray-300">PPG</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.PPG}</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">APG</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.APG}</td>
+                      </tr>
+                      <tr className="bg-gray-100">
+                        <th className="text-left px-4 py-2 border border-gray-300">RPG</th>
+                        <td className="px-4 py-2 border border-gray-300">{featuredPlayer.RPG}</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
+                        <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
+                          ${featuredPlayer.FORMATTED_SALARY}M
+                        </td>
+                      </tr>
+                      <tr className="bg-gray-100">
+                        <th className="text-left px-4 py-2 border border-gray-300">Predicted Salary</th>
+                        <td className="px-4 py-2 border border-gray-300 text-green-600 font-semibold">
+                          ${featuredPlayer.FORMATTED_PREDICTED_SALARY}M
+                        </td>
+                      </tr>
+                      <tr>
+                        <th className="text-left px-4 py-2 border border-gray-300">Salary Change</th>
+                        <td className={`px-4 py-2 border border-gray-300 font-bold ${salaryDiffColor}`}>
+                          {roundedSalaryChange}%
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
 
-            ) : (
-              <p className="text-blue-200">Loading player data...</p>
-            )}
+                  <p className="text-sm text-gray-700 mt-4">Based on recent performance and league trends.</p>
+                </div>
+              );
+            })()}
+
           </div>
         </div>
 
@@ -350,61 +358,69 @@ function App() {
 
           {lookupError && <p className="text-red-400">{lookupError}</p>}
 
-          {lookupResult && (
-            <div className="mt-6 bg-white text-black rounded-xl shadow-md p-6 text-left overflow-x-auto">
-              <h4 className="text-xl font-bold mb-4">{lookupResult.PLAYER_NAME}</h4>
-              <table className="w-full text-sm border border-gray-300">
-                <tbody>
-                  <tr className="bg-gray-100">
-                    <th className="text-left px-4 py-2 border border-gray-300">Team</th>
-                    <td className="px-4 py-2 border border-gray-300">{lookupResult.TEAM_ABBREVIATION}</td>
-                  </tr>
-                  <tr>
-                    <th className="text-left px-4 py-2 border border-gray-300">Age</th>
-                    <td className="px-4 py-2 border border-gray-300">{lookupResult.AGE}</td>
-                  </tr>
-                  <tr className="bg-gray-100">
-                    <th className="text-left px-4 py-2 border border-gray-300">PPG</th>
-                    <td className="px-4 py-2 border border-gray-300">{lookupResult.PPG}</td>
-                  </tr>
-                  <tr>
-                    <th className="text-left px-4 py-2 border border-gray-300">APG</th>
-                    <td className="px-4 py-2 border border-gray-300">{lookupResult.APG}</td>
-                  </tr>
-                  <tr className="bg-gray-100">
-                    <th className="text-left px-4 py-2 border border-gray-300">RPG</th>
-                    <td className="px-4 py-2 border border-gray-300">{lookupResult.RPG}</td>
-                  </tr>
-                  <tr>
-                    <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
-                    <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
-                      ${lookupResult.FORMATTED_SALARY}M
-                    </td>
-                  </tr>
-                  <tr className="bg-gray-100">
-                    <th className="text-left px-4 py-2 border border-gray-300">Predicted Salary</th>
-                    <td className="px-4 py-2 border border-gray-300 text-green-600 font-semibold">
-                      ${lookupResult.FORMATTED_PREDICTED_SALARY}M
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="text-left px-4 py-2 border border-gray-300">Salary Difference</th>
-                    <td className="px-4 py-2 border border-gray-300 font-bold">
-                      ${(featuredPlayer.FORMATTED_PREDICTED_SALARY - featuredPlayer.FORMATTED_SALARY).toFixed(1)}M
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+          {lookupResult && (() => {
+            const change = lookupResult.SALARY_PCT_CHANGE;
+            let salaryDiffColor = "text-yellow-500"; // default
+            if (change > 5) salaryDiffColor = "text-green-600";
+            else if (change < -5) salaryDiffColor = "text-red-600";
 
-            </div>
-          )}
+            const roundedSalaryChange = (((lookupResult.FORMATTED_PREDICTED_SALARY - lookupResult.FORMATTED_SALARY) * 100) / lookupResult.FORMATTED_SALARY).toFixed(2);
+
+
+            return (
+              <div className="mt-6 bg-white text-black rounded-xl shadow-md p-6 text-left overflow-x-auto">
+                <h4 className="text-xl font-bold mb-4">{lookupResult.PLAYER_NAME}</h4>
+                <table className="w-full text-sm border border-gray-300">
+                  <tbody>
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">Team</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.TEAM_ABBREVIATION}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Age</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.AGE}</td>
+                    </tr>
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">PPG</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.PPG}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">APG</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.APG}</td>
+                    </tr>
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">RPG</th>
+                      <td className="px-4 py-2 border border-gray-300">{lookupResult.RPG}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Official Salary</th>
+                      <td className="px-4 py-2 border border-gray-300 text-orange-500 font-semibold">
+                        ${lookupResult.FORMATTED_SALARY}M
+                      </td>
+                    </tr>
+                    <tr className="bg-gray-100">
+                      <th className="text-left px-4 py-2 border border-gray-300">Estimated Salary</th>
+                      <td className="px-4 py-2 border border-gray-300 text-green-600 font-semibold">
+                        ${lookupResult.FORMATTED_PREDICTED_SALARY}M
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 border border-gray-300">Salary Change</th>
+                      <td className={`px-4 py-2 border border-gray-300 font-bold ${salaryDiffColor}`}>
+                        {roundedSalaryChange}%
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()}
+
         </div>
 
 
       </section>
 
-      {/* Teams Section */}
-      {/* Teams Section */}
       {/* Teams Section */}
       <section id="teams" className="py-20 bg-blue-900 px-6">
         <div className="max-w-6xl mx-auto">
