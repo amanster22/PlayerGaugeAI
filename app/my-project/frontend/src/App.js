@@ -503,7 +503,7 @@ function App() {
     <div className="flex flex-wrap justify-center gap-12 mt-10">
 
       {/* Wealthiest Teams */}
-      <div className="bg-white text-black rounded-2xl shadow-lg p-6 flex-1 min-w-[600px] max-w-[800px]">
+      <div className="bg-white text-black rounded-2xl shadow-lg p-6 flex-1 min-w-[600px] max-w-[850px]">
         <h3 className="text-xl font-bold mb-4">Wealthiest Teams</h3>
         <iframe
           src="/wealthiestTeams2.html"
@@ -513,11 +513,48 @@ function App() {
       </div>
 
       {/* Poorest Teams */}
-      <div className="bg-white text-black rounded-2xl shadow-lg p-6 flex-1 min-w-[600px] max-w-[800px]">
+      <div className="bg-white text-black rounded-2xl shadow-lg p-6 flex-1 min-w-[600px] max-w-[850px]">
         <h3 className="text-xl font-bold mb-4">Poorest Teams</h3>
         <iframe
           src="/poorestTeams2.html"
           title="Poorest Teams"
+          className="w-full h-[600px] rounded-lg border border-gray-300"
+        />
+      </div>
+
+      {/* Active Players by Teams */}
+      <div className="bg-white text-black rounded-2xl shadow-lg p-6 flex-1 min-w-[600px] max-w-[1400px]">
+        <h3 className="text-xl font-bold mb-4">Active Players by Team</h3>
+        <iframe
+          src="/PlayersByTeam.html"
+          title="Active Player Performance"
+          className="w-full h-[600px] rounded-lg border border-gray-300"
+        />
+      </div>
+      {/* Active Players by FGA */}
+      <div className="bg-white text-black rounded-2xl shadow-lg p-6 flex-1 min-w-[600px] max-w-[1400px]">
+        <h3 className="text-xl font-bold mb-4">Active Players Performance by FGA</h3>
+        <iframe
+          src="/PerformanceByFGA.html"
+          title="Active Player Performance By FGA"
+          className="w-full h-[600px] rounded-lg border border-gray-300"
+        />
+      </div>
+      {/* Active Players by FTM */}
+      <div className="bg-white text-black rounded-2xl shadow-lg p-6 flex-1 min-w-[600px] max-w-[1400px]">
+        <h3 className="text-xl font-bold mb-4">Active Players Performance by FTM</h3>
+        <iframe
+          src="/PerformanceByFTM.html"
+          title="Active Player Performance By FTM"
+          className="w-full h-[600px] rounded-lg border border-gray-300"
+        />
+      </div>
+      {/* Active Players by Points */}
+      <div className="bg-white text-black rounded-2xl shadow-lg p-6 flex-1 min-w-[600px] max-w-[1400px]">
+        <h3 className="text-xl font-bold mb-4">Active Players Performance by Points</h3>
+        <iframe
+          src="/PerformanceByPTS.html"
+          title="Active Player Performance By Points"
           className="w-full h-[600px] rounded-lg border border-gray-300"
         />
       </div>
