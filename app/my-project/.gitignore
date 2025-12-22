@@ -1,2 +1,5 @@
 node_modules/
-nba_data.db
+.env
+backend/.env
+__pycache__/
+*.db
