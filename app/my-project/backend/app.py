@@ -3,7 +3,7 @@ from flask_cors import CORS
 from rag_agent import get_agent_response
 
 app = Flask(__name__)
-CORS(app)  # Allows React to talk to this Python server
+CORS(app)
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -15,7 +15,6 @@ def chat():
 
     print(f"🤖 Processing Query: {user_query}")
     
-    # Call the Agent
     answer = get_agent_response(user_query)
     
     return jsonify({
