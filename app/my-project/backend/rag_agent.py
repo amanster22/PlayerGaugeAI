@@ -22,7 +22,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Paths
 # ----------------------------
 base_dir = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(base_dir, "nba_dataV3.db")
+db_path = os.path.join(base_dir, "nba_data_2025-26.db")
 db_uri = f"sqlite:///{db_path}"
 
 
