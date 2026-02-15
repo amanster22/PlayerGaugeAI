@@ -32,10 +32,35 @@ db_uri = f"sqlite:///{db_path}"
 llm = OpenAI(temperature=0)
 
 
+# ...existing code...
+
 # ----------------------------
 # Quantitative Agent (SQL) - Cached
 # ----------------------------
 _quantitative_agent_cache = None
+
+quantitative_system_prompt = quantitative_system_prompt = """
+You are an expert NBA quantitative analyst.
+You have full access to the SQL schema and must use it to answer questions using numeric/statistical evidence.
+
+Contract Evaluation Logic:
+
+salary_pct_change = (predicted_salary - salary) / salary
+
+Interpretation:
+- A HIGH POSITIVE salary_pct_change means the predicted salary is much HIGHER than the actual salary → the player is UNDERPAID.
+- A NEGATIVE salary_pct_change means the actual salary exceeds the predicted salary → the player is OVERPAID.
+- A salary_pct_change close to 0 means the player is performing at their pay grade.
+
+Always explicitly cite:
+- salary
+- predicted_salary
+- salary_pct_change
+
+Do not invert this logic.
+Do not guess.
+Be concise and data-driven.
+"""
 
 def create_quantitative_agent():
     global _quantitative_agent_cache
@@ -48,10 +73,13 @@ def create_quantitative_agent():
             llm=llm,
             toolkit=sql_toolkit,
             verbose=False,
-            handle_parsing_errors=True
+            handle_parsing_errors=True,
+            prefix=quantitative_system_prompt
         )
 
     return _quantitative_agent_cache
+
+# ...existing code...
 
 
 # ----------------------------
@@ -134,7 +162,7 @@ Quantitative Data:
 Qualitative Analysis:
 {rag_answer}
 
-Provide a clear, well-structured final answer that combines both insights.
+Provide a clear, well-structured final answer that combines both insights. Keep response focused and try to limit to 150 words
 """
 )
 
@@ -205,7 +233,48 @@ Tool:
 )
 
 
+# ----------------------------
+# Salary Evaluation Prompt
+# ----------------------------
+salary_evaluation_prompt = PromptTemplate(
+    input_variables=["player_name", "salary", "predicted_salary", "salary_pct_change"],
+    template="""
+You are an expert NBA analyst evaluating player performance.
+
+Player: {player_name}
+Current Salary: {salary}
+Predicted Salary: {predicted_salary}
+Salary Percentage Change: {salary_pct_change}
+
+Determine if the player is performing above, below, or at their pay grade based on the provided metrics.
+
+Answer:
+"""
+)
+
+def evaluate_player_performance(player_name, salary, predicted_salary, salary_pct_change):
+    prompt = salary_evaluation_prompt.format(
+        player_name=player_name,
+        salary=salary,
+        predicted_salary=predicted_salary,
+        salary_pct_change=salary_pct_change
+    )
+    
+    response = llm.invoke(prompt)
+    return response
+
 def orchestrator_agent(question):
+
+    # Inside orchestrator_agent function, add logic to handle performance evaluation
+    if "performance" in question.lower():
+        # Extract player details from the question or database
+        player_name = "Example Player"  # Replace with actual extraction logic
+        salary = 1000000  # Replace with actual salary retrieval logic
+        predicted_salary = 1200000  # Replace with actual predicted salary retrieval logic
+        salary_pct_change = 20  # Replace with actual percentage change retrieval logic
+
+        return evaluate_player_performance(player_name, salary, predicted_salary, salary_pct_change)
+
     raw_decision = llm.invoke(
         orchestrator_prompt.format(
             schema=schema,
